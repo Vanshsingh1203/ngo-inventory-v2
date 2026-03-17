@@ -944,10 +944,7 @@ export default function App() {
   ].filter(n => n.roles.includes(role));
 
   // Set default page based on role
- import React, { useState, useEffect, useCallback, createContext, useContext, useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
-import { LogOut, Package, Warehouse, Truck, DollarSign, BarChart3, FileText, Menu, HelpCircle, Globe, Trash2, AlertTriangle, CheckCircle, Users, User, Home, Plus, Search, ArrowRight, Download, Eye, EyeOff, Shield, ClipboardList } from "lucide-react";
-import { supabase } from "./supabaseClient";
+
 import * as XLSX from "xlsx";
 
 // ═══════════════════════════════════════════════════════════════
