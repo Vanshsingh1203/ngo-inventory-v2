@@ -258,6 +258,22 @@ function ReceiveForm({items,giftCards,addItem,addGiftCard,addDonor,showToast}){
   const reset=()=>{setSub("");setQty("");setCond("New");setNotes("");setUrgent(false);setEstCost("");setGcAmount("");setGcCompany("");};
   const resetDonor=()=>{setDonorName("");setDonorEmail("");setDonorPhone("");setOrgName("");setDonorType("individual");};
   
+  const sendReceipt=async(receiptData)=>{
+    if(!receiptData.donorEmail)return;
+    try{
+      const{data,error}=await supabase.functions.invoke("send-receipt",{
+        body:receiptData
+      });
+      if(!error){
+        showToast(lang==="es"?"Recibo enviado por email":"Receipt sent to donor!");
+      }else{
+        console.error("Email send error:",error);
+      }
+    }catch(err){
+      console.error("Email send error:",err);
+    }
+  };
+  
   const saveDonor=async()=>{
     if(!donorName&&!orgName)return null;
     // Check if donor with same email exists
@@ -297,6 +313,16 @@ function ReceiveForm({items,giftCards,addItem,addGiftCard,addDonor,showToast}){
       if(ok){
         setLastEntry({...entry,isGiftCard:true,donorEmail,donorPhone,donorType});
         showToast(lang==="es"?"Tarjeta regalo registrada":"Gift card logged!");
+        // Send email receipt if donor email provided
+        if(donorEmail){
+          await sendReceipt({
+            donorName:displayName,
+            donorEmail,
+            donationType:"gift card",
+            giftCard:{amount:parseFloat(gcAmount),company:gcCompany||sub},
+            date:entry.date
+          });
+        }
       }
     }else{
       const totalEstCost=estCost?parseFloat(estCost)*parseInt(qty):null;
@@ -320,6 +346,22 @@ function ReceiveForm({items,giftCards,addItem,addGiftCard,addDonor,showToast}){
       if(ok){
         setLastEntry({...entry,estCostPerItem:estCost,donorType,orgName});
         showToast(lang==="es"?`${catName} recibido`:`${catName} — ${sub} (x${qty}) received!`);
+        // Send email receipt if donor email provided
+        if(donorEmail){
+          await sendReceipt({
+            donorName:displayName,
+            donorEmail,
+            donationType:"item donation",
+            items:[{
+              category:catObj.name,
+              subcategory:catObj.subs[subs.indexOf(sub)]||sub,
+              quantity:parseInt(qty),
+              condition:cond,
+              estimatedCost:totalEstCost
+            }],
+            date:entry.date
+          });
+        }
       }
     }
     reset();setSaving(false);
@@ -481,12 +523,205 @@ function ReceiveForm({items,giftCards,addItem,addGiftCard,addDonor,showToast}){
   );
 }
 
+// Storage Zones Configuration - 4 shelves each
+const ZONES = [
+  { id: "A", name: "Clothing", nameEs: "Ropa", color: "#6366f1", bg: "#eef2ff", locations: ["A1", "A2", "A3", "A4"] },
+  { id: "B", name: "Food", nameEs: "Alimentos", color: "#10b981", bg: "#ecfdf5", locations: ["B1", "B2", "B3", "B4"] },
+  { id: "C", name: "Household", nameEs: "Hogar", color: "#f59e0b", bg: "#fffbeb", locations: ["C1", "C2", "C3", "C4"] },
+  { id: "D", name: "Toiletries", nameEs: "Higiene", color: "#ec4899", bg: "#fdf2f8", locations: ["D1", "D2", "D3", "D4"] },
+  { id: "E", name: "Footwear", nameEs: "Calzado", color: "#8b5cf6", bg: "#f5f3ff", locations: ["E1", "E2", "E3", "E4"] },
+  { id: "F", name: "Miscellaneous", nameEs: "Misceláneo", color: "#64748b", bg: "#f1f5f9", locations: ["F1", "F2", "F3", "F4"] },
+];
+
+// All shelf locations for dropdown
+const ALL_SHELVES = ZONES.flatMap(z => z.locations);
+
+// Compact Floor Plan 2D Component for side-by-side view
+function FloorPlan2D({ items, onZoneClick, selectedZone, c, lang, highlightShelf }) {
+  const getZoneCount = (zoneId) => {
+    const zone = ZONES.find(z => z.id === zoneId);
+    if (!zone) return 0;
+    return items.filter(i => i.status === "In Storage" && zone.locations.some(loc => i.location?.toUpperCase().startsWith(loc))).reduce((s, i) => s + i.qty, 0);
+  };
+  
+  const getShelfCount = (shelf) => {
+    return items.filter(i => i.status === "In Storage" && i.location?.toUpperCase() === shelf).reduce((s, i) => s + i.qty, 0);
+  };
+  
+  const isShelfHighlighted = (shelf) => highlightShelf?.toUpperCase() === shelf;
+
+  return (
+    <svg viewBox="0 0 480 420" style={{ width: "100%", height: "auto" }}>
+      <rect width="480" height="420" fill={c.bg} />
+      {/* Main room */}
+      <rect x="20" y="20" width="300" height="220" fill={c.card} stroke={c.text} strokeWidth="2" />
+      {/* Extension room */}
+      <rect x="320" y="120" width="140" height="160" fill={c.card} stroke={c.text} strokeWidth="2" />
+      <line x1="320" y1="120" x2="320" y2="240" stroke={c.card} strokeWidth="3" />
+      
+      {/* Entry */}
+      <rect x="40" y="237" width="50" height="5" fill={c.card} />
+      <text x="65" y="255" textAnchor="middle" fontSize="8" fill="#3b82f6" fontWeight="500">ENTRY</text>
+      
+      {/* Zone A - Clothing */}
+      <g onClick={() => onZoneClick?.("A")} style={{ cursor: "pointer" }}>
+        <rect x="25" y="25" width="90" height="75" fill={selectedZone === "A" ? "#c7d2fe" : "#eef2ff"} stroke="#6366f1" strokeWidth={selectedZone === "A" ? 2 : 1} rx="4" />
+        <text x="70" y="42" textAnchor="middle" fontSize="11" fill="#4338ca" fontWeight="700">A · {lang === "es" ? "Ropa" : "Clothing"}</text>
+        <g transform="translate(30, 48)">
+          {["A1","A2","A3","A4"].map((s,i) => (
+            <g key={s} transform={`translate(${i*20}, 0)`}>
+              <rect width="18" height="22" fill={isShelfHighlighted(s) ? "#4f46e5" : "#a5b4fc"} stroke="#6366f1" rx="2" />
+              <text x="9" y="12" textAnchor="middle" fontSize="7" fill={isShelfHighlighted(s) ? "#fff" : "#3730a3"} fontWeight="600">{s}</text>
+              <text x="9" y="20" textAnchor="middle" fontSize="6" fill={isShelfHighlighted(s) ? "#c7d2fe" : "#6366f1"}>{getShelfCount(s)}</text>
+            </g>
+          ))}
+        </g>
+        <rect x="55" y="78" width="30" height="12" fill="#6366f1" rx="6" />
+        <text x="70" y="87" textAnchor="middle" fontSize="8" fill="#fff" fontWeight="600">{getZoneCount("A")}</text>
+      </g>
+      
+      {/* Zone B - Food */}
+      <g onClick={() => onZoneClick?.("B")} style={{ cursor: "pointer" }}>
+        <rect x="125" y="25" width="90" height="75" fill={selectedZone === "B" ? "#a7f3d0" : "#ecfdf5"} stroke="#10b981" strokeWidth={selectedZone === "B" ? 2 : 1} rx="4" />
+        <text x="170" y="42" textAnchor="middle" fontSize="11" fill="#047857" fontWeight="700">B · {lang === "es" ? "Alimentos" : "Food"}</text>
+        <g transform="translate(130, 48)">
+          {["B1","B2","B3","B4"].map((s,i) => (
+            <g key={s} transform={`translate(${i*20}, 0)`}>
+              <rect width="18" height="22" fill={isShelfHighlighted(s) ? "#059669" : "#6ee7b7"} stroke="#10b981" rx="2" />
+              <text x="9" y="12" textAnchor="middle" fontSize="7" fill={isShelfHighlighted(s) ? "#fff" : "#065f46"} fontWeight="600">{s}</text>
+              <text x="9" y="20" textAnchor="middle" fontSize="6" fill={isShelfHighlighted(s) ? "#a7f3d0" : "#10b981"}>{getShelfCount(s)}</text>
+            </g>
+          ))}
+        </g>
+        <rect x="155" y="78" width="30" height="12" fill="#10b981" rx="6" />
+        <text x="170" y="87" textAnchor="middle" fontSize="8" fill="#fff" fontWeight="600">{getZoneCount("B")}</text>
+      </g>
+      
+      {/* Fridge */}
+      <rect x="225" y="25" width="35" height="45" fill="#dbeafe" stroke="#3b82f6" strokeWidth="1.5" rx="3" />
+      <text x="242" y="50" textAnchor="middle" fontSize="8" fill="#1e40af" fontWeight="600">FRIDGE</text>
+      
+      {/* Zone C - Household */}
+      <g onClick={() => onZoneClick?.("C")} style={{ cursor: "pointer" }}>
+        <rect x="25" y="110" width="130" height="75" fill={selectedZone === "C" ? "#fde68a" : "#fffbeb"} stroke="#f59e0b" strokeWidth={selectedZone === "C" ? 2 : 1} rx="4" />
+        <text x="90" y="127" textAnchor="middle" fontSize="11" fill="#b45309" fontWeight="700">C · {lang === "es" ? "Hogar" : "Household"}</text>
+        <g transform="translate(30, 133)">
+          {["C1","C2","C3","C4"].map((s,i) => (
+            <g key={s} transform={`translate(${i*28}, 0)`}>
+              <rect width="26" height="22" fill={isShelfHighlighted(s) ? "#d97706" : "#fcd34d"} stroke="#f59e0b" rx="2" />
+              <text x="13" y="12" textAnchor="middle" fontSize="7" fill={isShelfHighlighted(s) ? "#fff" : "#78350f"} fontWeight="600">{s}</text>
+              <text x="13" y="20" textAnchor="middle" fontSize="6" fill={isShelfHighlighted(s) ? "#fde68a" : "#b45309"}>{getShelfCount(s)}</text>
+            </g>
+          ))}
+        </g>
+        <rect x="75" y="163" width="30" height="12" fill="#f59e0b" rx="6" />
+        <text x="90" y="172" textAnchor="middle" fontSize="8" fill="#fff" fontWeight="600">{getZoneCount("C")}</text>
+      </g>
+      
+      {/* Zone D - Toiletries */}
+      <g onClick={() => onZoneClick?.("D")} style={{ cursor: "pointer" }}>
+        <rect x="165" y="110" width="130" height="75" fill={selectedZone === "D" ? "#fbcfe8" : "#fdf2f8"} stroke="#ec4899" strokeWidth={selectedZone === "D" ? 2 : 1} rx="4" />
+        <text x="230" y="127" textAnchor="middle" fontSize="11" fill="#be185d" fontWeight="700">D · {lang === "es" ? "Higiene" : "Toiletries"}</text>
+        <g transform="translate(170, 133)">
+          {["D1","D2","D3","D4"].map((s,i) => (
+            <g key={s} transform={`translate(${i*28}, 0)`}>
+              <rect width="26" height="22" fill={isShelfHighlighted(s) ? "#db2777" : "#f9a8d4"} stroke="#ec4899" rx="2" />
+              <text x="13" y="12" textAnchor="middle" fontSize="7" fill={isShelfHighlighted(s) ? "#fff" : "#9d174d"} fontWeight="600">{s}</text>
+              <text x="13" y="20" textAnchor="middle" fontSize="6" fill={isShelfHighlighted(s) ? "#fbcfe8" : "#be185d"}>{getShelfCount(s)}</text>
+            </g>
+          ))}
+        </g>
+        <rect x="215" y="163" width="30" height="12" fill="#ec4899" rx="6" />
+        <text x="230" y="172" textAnchor="middle" fontSize="8" fill="#fff" fontWeight="600">{getZoneCount("D")}</text>
+      </g>
+      
+      {/* Aisle */}
+      <rect x="25" y="195" width="270" height="14" fill={c.pillBg} stroke={c.inputBorder} strokeWidth="1" strokeDasharray="3" rx="3" />
+      <text x="160" y="205" textAnchor="middle" fontSize="7" fill={c.textMuted}>← MAIN AISLE →</text>
+      
+      {/* Zone E - Footwear */}
+      <g onClick={() => onZoneClick?.("E")} style={{ cursor: "pointer" }}>
+        <rect x="395" y="125" width="60" height="150" fill={selectedZone === "E" ? "#ddd6fe" : "#f5f3ff"} stroke="#8b5cf6" strokeWidth={selectedZone === "E" ? 2 : 1} rx="4" />
+        <text x="425" y="142" textAnchor="middle" fontSize="10" fill="#6d28d9" fontWeight="700">E</text>
+        <text x="425" y="154" textAnchor="middle" fontSize="8" fill="#8b5cf6">{lang === "es" ? "Calzado" : "Footwear"}</text>
+        <g transform="translate(400, 160)">
+          {["E1","E2","E3","E4"].map((s,i) => (
+            <g key={s} transform={`translate(0, ${i*26})`}>
+              <rect width="50" height="22" fill={isShelfHighlighted(s) ? "#7c3aed" : "#c4b5fd"} stroke="#8b5cf6" rx="2" />
+              <text x="15" y="14" textAnchor="middle" fontSize="8" fill={isShelfHighlighted(s) ? "#fff" : "#5b21b6"} fontWeight="600">{s}</text>
+              <text x="38" y="14" textAnchor="middle" fontSize="8" fill={isShelfHighlighted(s) ? "#ddd6fe" : "#7c3aed"}>{getShelfCount(s)}</text>
+            </g>
+          ))}
+        </g>
+      </g>
+      
+      {/* Zone F - Misc */}
+      <g onClick={() => onZoneClick?.("F")} style={{ cursor: "pointer" }}>
+        <rect x="325" y="175" width="65" height="100" fill={selectedZone === "F" ? "#cbd5e1" : "#f1f5f9"} stroke="#64748b" strokeWidth={selectedZone === "F" ? 2 : 1} rx="4" />
+        <text x="357" y="192" textAnchor="middle" fontSize="10" fill="#374151" fontWeight="700">F · Misc</text>
+        <g transform="translate(330, 198)">
+          {["F1","F2","F3","F4"].map((s,i) => (
+            <g key={s} transform={`translate(${(i%2)*28}, ${Math.floor(i/2)*26})`}>
+              <rect width="26" height="22" fill={isShelfHighlighted(s) ? "#475569" : "#cbd5e1"} stroke="#64748b" rx="2" />
+              <text x="13" y="12" textAnchor="middle" fontSize="7" fill={isShelfHighlighted(s) ? "#fff" : "#374151"} fontWeight="600">{s}</text>
+              <text x="13" y="20" textAnchor="middle" fontSize="6" fill={isShelfHighlighted(s) ? "#cbd5e1" : "#64748b"}>{getShelfCount(s)}</text>
+            </g>
+          ))}
+        </g>
+      </g>
+      
+      {/* Desk */}
+      <rect x="325" y="130" width="55" height="22" fill="#fef3c7" stroke="#f59e0b" strokeWidth="1" rx="3" />
+      <text x="352" y="144" textAnchor="middle" fontSize="8" fill="#92400e" fontWeight="500">Desk</text>
+      
+      {/* Legend */}
+      <rect x="20" y="290" width="440" height="120" fill={c.confirmBg} stroke={c.inputBorder} rx="6" />
+      <text x="35" y="310" fontSize="11" fill={c.text} fontWeight="600">{lang === "es" ? "Zonas de almacenamiento" : "Storage Zones"}</text>
+      {ZONES.map((z, i) => (
+        <g key={z.id} transform={`translate(${35 + (i % 3) * 145}, ${325 + Math.floor(i / 3) * 40})`}>
+          <rect width="12" height="12" fill={z.color} rx="2" />
+          <text x="18" y="10" fontSize="10" fill={c.text} fontWeight="600">{z.id}</text>
+          <text x="30" y="10" fontSize="9" fill={c.textMuted}>{lang === "es" ? z.nameEs : z.name}</text>
+          <text x="0" y="24" fontSize="8" fill={c.textFaint}>{z.locations.join(" · ")}</text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function ZoneItemsPanel({ zone, items, onBack, onSell, c, t, lang }) {
+  const zoneData = ZONES.find(z => z.id === zone);
+  const zoneItems = items.filter(i => i.status === "In Storage" && zoneData?.locations.some(loc => i.location?.toUpperCase().startsWith(loc)));
+  return (
+    <div style={{ background: c.card, borderRadius: 14, padding: 24, boxShadow: `0 1px 3px ${c.cardBorder}` }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: zoneData?.bg, display: "flex", alignItems: "center", justifyContent: "center" }}><Package size={20} color={zoneData?.color} /></div>
+          <div><h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: c.text }}>{lang === "es" ? "Zona" : "Zone"} {zone}</h3><p style={{ margin: "2px 0 0", fontSize: 13, color: zoneData?.color, fontWeight: 600 }}>{lang === "es" ? zoneData?.nameEs : zoneData?.name}</p></div>
+        </div>
+        <button onClick={onBack} style={{ padding: "8px 16px", background: c.pillBg, color: c.textSec, border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}><ArrowRight size={14} style={{ transform: "rotate(180deg)" }} /> {lang === "es" ? "Volver" : "Back"}</button>
+      </div>
+      {zoneItems.length === 0 ? (<div style={{ textAlign: "center", padding: 48, color: c.textFaint }}><Package size={40} style={{ marginBottom: 12, opacity: 0.4 }} /><p>{t.noData}</p></div>) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>{zoneItems.map(item => (
+          <div key={item.id} style={{ padding: 16, background: c.confirmBg, borderRadius: 10, display: "flex", justifyContent: "space-between", alignItems: "center", borderLeft: `4px solid ${zoneData?.color}` }}>
+            <div><div style={{ fontSize: 14, fontWeight: 600, color: c.text }}>{item.catName} — {item.sub}</div><div style={{ fontSize: 12, color: c.textMuted, marginTop: 4 }}><span style={{ fontFamily: "monospace", background: c.tagBg, padding: "2px 6px", borderRadius: 4, marginRight: 8 }}>{item.id}</span>{t.location}: <b>{item.location}</b> · {t.qty}: <b>{item.qty}</b></div></div>
+            <button onClick={() => onSell(item.id)} style={{ padding: "6px 12px", background: "#8b5cf6", color: "#fff", border: "none", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}><ShoppingCart size={14} /> {t.sell}</button>
+          </div>
+        ))}</div>
+      )}
+    </div>
+  );
+}
+
 function InventoryView({items,updateItem,deleteItem,showToast}){
   const{t,lang,profile,c}=useApp();
   const[search,setSearch]=useState("");const[fCat,setFCat]=useState("");const[fStatus,setFStatus]=useState("");
   const[locInput,setLocInput]=useState({});const[delModal,setDelModal]=useState(null);
   const[sellModal,setSellModal]=useState(null);const[salePrice,setSalePrice]=useState("");
+  const[highlightShelf,setHighlightShelf]=useState("");
   
+  // Filter to show only "Received" items that need to be assigned a location
+  const pendingItems = items.filter(i => i.status === "Received");
   const filtered=items.filter(i=>{
     if(search){const q=search.toLowerCase();if(!i.id.toLowerCase().includes(q)&&!i.donor.toLowerCase().includes(q)&&!i.catName.toLowerCase().includes(q))return false;}
     if(fCat&&i.cat!==fCat)return false;
@@ -496,9 +731,9 @@ function InventoryView({items,updateItem,deleteItem,showToast}){
   
   const moveToStorage=async(id)=>{
     const loc=locInput[id];
-    if(!loc||!loc.trim()){showToast(t.locationRequired);return;}
-    const ok=await updateItem(id,{status:"In Storage",location:loc.trim()});
-    if(ok){showToast(t.moveToStorage+" ✓");setLocInput(p=>({...p,[id]:""}));}
+    if(!loc){showToast(t.locationRequired);return;}
+    const ok=await updateItem(id,{status:"In Storage",location:loc.toUpperCase()});
+    if(ok){showToast(t.moveToStorage+" ✓");setLocInput(p=>({...p,[id]:""}));setHighlightShelf("");}
   };
   
   const confirmDelete=async()=>{if(!delModal)return;await deleteItem(delModal);setDelModal(null);showToast(t.delete+" ✓");};
@@ -512,6 +747,10 @@ function InventoryView({items,updateItem,deleteItem,showToast}){
   
   const inp={padding:"10px 14px",border:`1px solid ${c.inputBorder}`,borderRadius:10,fontSize:13,outline:"none",background:c.input,color:c.text};
   const isAdmin=profile?.role==="admin";
+  const card={background:c.card,borderRadius:14,padding:20,boxShadow:`0 1px 3px ${c.cardBorder}`};
+  
+  // Get zone color for shelf
+  const getShelfZone = (shelf) => ZONES.find(z => z.locations.includes(shelf?.toUpperCase()));
   
   return(
     <>
@@ -545,8 +784,77 @@ function InventoryView({items,updateItem,deleteItem,showToast}){
         </div>
       </Modal>
       
-      <div style={{background:c.card,borderRadius:14,padding:24,boxShadow:`0 1px 3px ${c.cardBorder}`}}>
-        <h2 style={{margin:"0 0 20px",fontSize:18,fontWeight:700,color:c.text,display:"flex",alignItems:"center",gap:10}}><Warehouse size={20} color="#4f46e5"/> {t.fullInventory}</h2>
+      <h2 style={{margin:"0 0 20px",fontSize:18,fontWeight:700,color:c.text,display:"flex",alignItems:"center",gap:10}}><Warehouse size={20} color="#4f46e5"/> {t.fullInventory}</h2>
+      
+      {/* Side-by-side layout: Floor Plan + Pending Items */}
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:20}}>
+        {/* Floor Plan */}
+        <div style={card}>
+          <h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:600,color:c.text,display:"flex",alignItems:"center",gap:8}}><Home size={18}/> {lang==="es"?"Mapa de Almacén":"Storage Map"}</h3>
+          <FloorPlan2D items={items} c={c} lang={lang} highlightShelf={highlightShelf}/>
+        </div>
+        
+        {/* Pending Items to Assign Location */}
+        <div style={card}>
+          <h3 style={{margin:"0 0 12px",fontSize:15,fontWeight:600,color:c.text,display:"flex",alignItems:"center",gap:8}}>
+            <Package size={18}/> {lang==="es"?"Asignar Ubicación":"Assign Location"}
+            {pendingItems.length>0&&<span style={{background:"#f59e0b",color:"#fff",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700}}>{pendingItems.length}</span>}
+          </h3>
+          
+          {pendingItems.length===0?(
+            <div style={{textAlign:"center",padding:40,color:c.textFaint}}>
+              <CheckCircle size={36} style={{marginBottom:8,opacity:.4}}/>
+              <p style={{margin:0,fontSize:13}}>{lang==="es"?"Todos los artículos asignados":"All items assigned"}</p>
+            </div>
+          ):(
+            <div style={{maxHeight:360,overflowY:"auto",display:"flex",flexDirection:"column",gap:10}}>
+              {pendingItems.map(i=>{
+                const selectedZone = getShelfZone(locInput[i.id]);
+                return(
+                  <div key={i.id} style={{padding:14,background:c.confirmBg,borderRadius:10,borderLeft:`4px solid ${i.urgent?"#e11d48":"#f59e0b"}`}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:600,color:c.text}}>{i.catName} — {i.sub}</div>
+                        <div style={{fontSize:11,color:c.textMuted,marginTop:2}}>
+                          <span style={{fontFamily:"monospace",background:c.tagBg,padding:"1px 5px",borderRadius:4}}>{i.id}</span>
+                          <span style={{marginLeft:8}}>×{i.qty}</span>
+                          {i.urgent&&<span style={{marginLeft:8,color:"#e11d48",fontWeight:600}}>⚠ Urgent</span>}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                      <select 
+                        value={locInput[i.id]||""} 
+                        onChange={e=>{setLocInput(p=>({...p,[i.id]:e.target.value}));setHighlightShelf(e.target.value);}}
+                        style={{...inp,flex:1,padding:"8px 12px",background:selectedZone?selectedZone.bg:c.input,borderColor:selectedZone?selectedZone.color:c.inputBorder}}
+                      >
+                        <option value="">{lang==="es"?"Seleccionar estante...":"Select shelf..."}</option>
+                        {ZONES.map(z=>(
+                          <optgroup key={z.id} label={`${z.id} — ${lang==="es"?z.nameEs:z.name}`}>
+                            {z.locations.map(loc=>(
+                              <option key={loc} value={loc}>{loc}</option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                      <button 
+                        onClick={()=>moveToStorage(i.id)} 
+                        disabled={!locInput[i.id]}
+                        style={{padding:"8px 14px",background:locInput[i.id]?"#4f46e5":"#94a3b8",color:"#fff",border:"none",borderRadius:8,fontSize:12,cursor:locInput[i.id]?"pointer":"not-allowed",fontWeight:600,display:"flex",alignItems:"center",gap:4}}
+                      >
+                        <ArrowRight size={14}/> {lang==="es"?"Asignar":"Assign"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Full Inventory Table */}
+      <div style={card}>
         <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:16}}>
           <div style={{flex:"1 1 220px",position:"relative"}}><Search size={16} style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:c.textFaint}}/><input placeholder={t.searchPlaceholder} value={search} onChange={e=>setSearch(e.target.value)} style={{...inp,width:"100%",paddingLeft:36,boxSizing:"border-box"}}/></div>
           <select value={fCat} onChange={e=>setFCat(e.target.value)} style={inp}><option value="">{t.allCategories}</option>{CATEGORIES.filter(cc=>cc.code!=="GFT").map(cc=><option key={cc.code} value={cc.code}>{cc.name}</option>)}</select>
@@ -557,36 +865,32 @@ function InventoryView({items,updateItem,deleteItem,showToast}){
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
             <thead>
               <tr style={{background:c.tableBg,borderBottom:`2px solid ${c.headerBorder}`}}>
-                {[t.id,t.category,t.subcategory,t.qty,t.condition,t.donor,t.status,t.estimatedCost,t.location,t.date,t.action].map(h=><th key={h} style={{padding:"12px 8px",textAlign:"left",color:c.textSec,fontWeight:600,whiteSpace:"nowrap",fontSize:12}}>{h}</th>)}
+                {[t.id,t.category,t.subcategory,t.qty,t.condition,t.donor,t.status,t.location,t.date,t.action].map(h=><th key={h} style={{padding:"12px 8px",textAlign:"left",color:c.textSec,fontWeight:600,whiteSpace:"nowrap",fontSize:12}}>{h}</th>)}
               </tr>
             </thead>
             <tbody>
-              {filtered.map(i=>(
-                <tr key={i.id} style={{borderBottom:`1px solid ${c.tableRowBorder}`,background:i.urgent&&i.status!=="Distributed"&&i.status!=="Sold"?c.urgentBg:"transparent"}}>
-                  <td style={{padding:"12px 8px",fontFamily:"monospace",fontSize:11,color:c.textMuted}}>{i.id}</td>
-                  <td style={{padding:"12px 8px",color:c.text}}>{i.catName}</td>
-                  <td style={{padding:"12px 8px",color:c.text}}>{i.sub}</td>
-                  <td style={{padding:"12px 8px",fontWeight:700,color:c.text}}>{i.qty}</td>
-                  <td style={{padding:"12px 8px",color:c.text}}>{i.condition}</td>
-                  <td style={{padding:"12px 8px",color:c.text}}>{i.donor}</td>
-                  <td style={{padding:"12px 8px"}}><span style={{padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:(STATUS_CLR[i.status]||"#94a3b8")+"18",color:STATUS_CLR[i.status]||"#94a3b8"}}>{i.status}{i.status==="Sold"&&i.sale_price?` ($${i.sale_price})`:""}</span></td>
-                  <td style={{padding:"12px 8px",fontSize:12,color:c.textMuted}}>{i.estimated_cost?`$${i.estimated_cost.toFixed(2)}`:"—"}</td>
-                  <td style={{padding:"12px 8px",fontSize:12,color:c.textMuted}}>{i.location||"—"}</td>
-                  <td style={{padding:"12px 8px",fontSize:12,color:c.textMuted}}>{i.date}</td>
-                  <td style={{padding:"12px 8px",whiteSpace:"nowrap"}}>
-                    {i.status==="Received"&&(
-                      <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                        <input placeholder={t.enterLocation} value={locInput[i.id]||""} onChange={e=>setLocInput(p=>({...p,[i.id]:e.target.value}))} style={{padding:"6px 10px",border:`1px solid ${c.inputBorder}`,borderRadius:8,fontSize:12,width:140,background:c.input,color:c.text}}/>
-                        <button onClick={()=>moveToStorage(i.id)} style={{padding:"6px 12px",background:"#4f46e5",color:"#fff",border:"none",borderRadius:8,fontSize:11,cursor:"pointer",fontWeight:600,display:"flex",alignItems:"center",gap:4}}><ArrowRight size={14}/></button>
-                      </div>
-                    )}
-                    {i.status==="In Storage"&&(
-                      <button onClick={()=>setSellModal(i.id)} style={{padding:"6px 12px",background:"#8b5cf6",color:"#fff",border:"none",borderRadius:8,fontSize:11,cursor:"pointer",fontWeight:600,display:"flex",alignItems:"center",gap:4,marginRight:4}}><ShoppingCart size={14}/> {t.sell}</button>
-                    )}
-                    {isAdmin&&<button onClick={()=>setDelModal(i.id)} style={{padding:"6px",background:"none",border:"none",cursor:"pointer",color:"#e11d48",marginLeft:4}}><Trash2 size={15}/></button>}
-                  </td>
-                </tr>
-              ))}
+              {filtered.map(i=>{
+                const locZone = getShelfZone(i.location);
+                return(
+                  <tr key={i.id} style={{borderBottom:`1px solid ${c.tableRowBorder}`,background:i.urgent&&i.status!=="Distributed"&&i.status!=="Sold"?c.urgentBg:"transparent"}}>
+                    <td style={{padding:"12px 8px",fontFamily:"monospace",fontSize:11,color:c.textMuted}}>{i.id}</td>
+                    <td style={{padding:"12px 8px",color:c.text}}>{i.catName}</td>
+                    <td style={{padding:"12px 8px",color:c.text}}>{i.sub}</td>
+                    <td style={{padding:"12px 8px",fontWeight:700,color:c.text}}>{i.qty}</td>
+                    <td style={{padding:"12px 8px",color:c.text}}>{i.condition}</td>
+                    <td style={{padding:"12px 8px",color:c.text}}>{i.donor}</td>
+                    <td style={{padding:"12px 8px"}}><span style={{padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:600,background:(STATUS_CLR[i.status]||"#94a3b8")+"18",color:STATUS_CLR[i.status]||"#94a3b8"}}>{i.status}{i.status==="Sold"&&i.sale_price?` ($${i.sale_price})`:""}</span></td>
+                    <td style={{padding:"12px 8px"}}>{i.location?<span style={{padding:"3px 10px",borderRadius:6,fontSize:11,fontWeight:600,background:locZone?.bg||c.pillBg,color:locZone?.color||c.textMuted}}>{i.location}</span>:"—"}</td>
+                    <td style={{padding:"12px 8px",fontSize:12,color:c.textMuted}}>{i.date}</td>
+                    <td style={{padding:"12px 8px",whiteSpace:"nowrap"}}>
+                      {i.status==="In Storage"&&(
+                        <button onClick={()=>setSellModal(i.id)} style={{padding:"6px 12px",background:"#8b5cf6",color:"#fff",border:"none",borderRadius:8,fontSize:11,cursor:"pointer",fontWeight:600,display:"flex",alignItems:"center",gap:4,marginRight:4}}><ShoppingCart size={14}/> {t.sell}</button>
+                      )}
+                      {isAdmin&&<button onClick={()=>setDelModal(i.id)} style={{padding:"6px",background:"none",border:"none",cursor:"pointer",color:"#e11d48",marginLeft:4}}><Trash2 size={15}/></button>}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -848,7 +1152,7 @@ export default function App(){
       {toast&&<div style={{position:"fixed",top:20,left:"50%",transform:"translateX(-50%)",background:dark?"#334155":"#0f172a",color:"#fff",padding:"12px 28px",borderRadius:12,fontWeight:600,zIndex:3000,boxShadow:"0 8px 30px rgba(0,0,0,.3)",fontSize:14,display:"flex",alignItems:"center",gap:8}}><CheckCircle size={18} color="#10b981"/> {toast}</div>}
       <div style={{display:"flex",minHeight:"100vh",background:c.bg,fontFamily:"'Inter','Segoe UI',system-ui,sans-serif",transition:"background .3s"}}>
         <div style={{width:sidebarOpen?240:0,minWidth:sidebarOpen?240:0,background:c.sidebarBg,transition:"all .3s",overflow:"hidden",position:"fixed",top:0,left:0,bottom:0,zIndex:900,display:"flex",flexDirection:"column"}}>
-          <div style={{padding:"20px 20px 16px",borderBottom:"1px solid rgba(255,255,255,.08)"}}><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:36,height:36,borderRadius:10,background:"#4f46e5",display:"flex",alignItems:"center",justifyContent:"center"}}><Package size={18} color="#fff"/></div><div><div style={{fontSize:15,fontWeight:700,color:"#fff"}}>NGO Inventory</div><div style={{fontSize:11,color:"#64748b"}}>v2.1</div></div></div></div>
+          <div style={{padding:"20px 20px 16px",borderBottom:"1px solid rgba(255,255,255,.08)"}}><div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:36,height:36,borderRadius:10,background:"#4f46e5",display:"flex",alignItems:"center",justifyContent:"center"}}><Package size={18} color="#fff"/></div><div><div style={{fontSize:15,fontWeight:700,color:"#fff"}}>NGO Inventory</div><div style={{fontSize:11,color:"#64748b"}}>v2.2</div></div></div></div>
           <nav style={{flex:1,padding:"12px 10px"}}>{navItems.map(n=>(<button key={n.id} onClick={()=>{setPage(n.id);setSidebarOpen(false);}} style={{width:"100%",padding:"11px 14px",border:"none",borderRadius:10,cursor:"pointer",fontSize:14,fontWeight:page===n.id?600:500,background:page===n.id?"rgba(79,70,229,.2)":"transparent",color:page===n.id?"#a5b4fc":"#94a3b8",display:"flex",alignItems:"center",gap:12,marginBottom:4,textAlign:"left"}}>{n.icon} {n.label}</button>))}</nav>
           <div style={{padding:"16px 14px",borderTop:"1px solid rgba(255,255,255,.08)"}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}><div style={{width:34,height:34,borderRadius:10,background:roleColor+"20",display:"flex",alignItems:"center",justifyContent:"center",color:roleColor}}><Shield size={16}/></div><div><div style={{fontSize:13,fontWeight:600,color:"#e2e8f0"}}>{profile?.full_name}</div><div style={{fontSize:11,color:roleColor,fontWeight:600}}>{roleLabel}</div></div></div><button onClick={signOut} style={{width:"100%",padding:"9px",background:"rgba(255,255,255,.06)",color:"#94a3b8",border:"none",borderRadius:8,fontSize:13,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><LogOut size={15}/> {t.logout}</button></div>
         </div>

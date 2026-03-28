@@ -1,0 +1,54 @@
+Deno.serve(async (req) => {
+  const headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "*",
+    "Content-Type": "application/json",
+  };
+
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 200, headers });
+  }
+
+  try {
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    const { donorName, donorEmail, donationType, items, giftCard, date } = await req.json();
+
+    if (!donorEmail) {
+      return new Response(JSON.stringify({ error: "No email" }), { status: 400, headers });
+    }
+
+    let itemsHtml = "";
+    if (items && items.length > 0) {
+      itemsHtml = items.map((item) => 
+        `<tr><td style="padding:12px;border-bottom:1px solid #e2e8f0;">${item.category} - ${item.subcategory}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;">${item.quantity}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;">${item.condition}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;">${item.estimatedCost ? '$' + item.estimatedCost : 'N/A'}</td></tr>`
+      ).join("");
+    }
+
+    let giftCardHtml = "";
+    if (giftCard) {
+      giftCardHtml = `<div style="background:#fef3c7;border-radius:8px;padding:16px;margin:20px 0;"><h3 style="margin:0 0 8px;color:#92400e;">Gift Card Donation</h3><p style="margin:0;font-size:18px;"><strong>$${giftCard.amount}</strong> - ${giftCard.company}</p></div>`;
+    }
+
+    const emailHtml = `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f8fafc;"><div style="background:white;border-radius:12px;padding:32px;"><h1 style="text-align:center;color:#0f172a;">Thank You for Your Donation!</h1><p style="color:#475569;">Dear ${donorName || "Generous Donor"},</p><p style="color:#475569;">Thank you for your generous ${donationType || "donation"}.</p><div style="background:#f1f5f9;border-radius:8px;padding:16px;margin:20px 0;"><p style="margin:0;color:#64748b;"><strong>Date:</strong> ${date}</p></div>${giftCardHtml}${items && items.length > 0 ? `<h3 style="color:#0f172a;">Items Donated:</h3><table style="width:100%;border-collapse:collapse;font-size:14px;"><thead><tr style="background:#f1f5f9;"><th style="padding:12px;text-align:left;">Item</th><th style="padding:12px;text-align:left;">Qty</th><th style="padding:12px;text-align:left;">Condition</th><th style="padding:12px;text-align:left;">Est. Value</th></tr></thead><tbody>${itemsHtml}</tbody></table>` : ""}<p style="text-align:center;color:#94a3b8;font-size:13px;margin-top:32px;">This receipt was automatically generated.</p></div></body></html>`;
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: "NGO Inventory <onboarding@resend.dev>",
+        to: [donorEmail],
+        subject: "Thank You for Your Donation!",
+        html: emailHtml,
+      }),
+    });
+
+    const data = await res.json();
+    return new Response(JSON.stringify(data), { status: res.ok ? 200 : 400, headers });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
+  }
+});
