@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const fs = require\\('fs'\\); const src = fs.readFileSync\\('src/App.js','utf8'\\); const lines = src.split\\('\\\\n'\\).length; console.log\\('Lines:', lines\\); const hasLight = src.includes\\('cardShadow:\\\\\"9px 9px'\\); const hasDark = src.includes\\('cardShadow:\\\\\"0 2px 12px'\\); const hasSidebar = src.includes\\('Plus Jakarta Sans'\\); const hasGlobalFloat = src.includes\\('@keyframes float'\\); console.log\\({hasLightNeu: hasLight, hasDarkFallback: hasDark, hasPlusJakarta: hasSidebar, hasFloat: hasGlobalFloat}\\);\")",
+      "Bash(npx --yes react-scripts build)"
+    ]
+  }
+}

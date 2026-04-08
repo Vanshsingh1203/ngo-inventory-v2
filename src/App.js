@@ -11,6 +11,8 @@ import * as XLSX from "xlsx";
 function GlobalStyles() {
   return (
     <style>{`
+      /* ── Neumorphic Design System ── */
+
       /* Keyframe Animations */
       @keyframes fadeIn {
         from { opacity: 0; }
@@ -44,13 +46,23 @@ function GlobalStyles() {
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-4px); }
       }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+      }
+
+      /* Typography */
+      h1, h2, h3, h4 {
+        font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif !important;
+      }
 
       /* Animation Classes */
       .fade-in { animation: fadeIn 0.3s ease-out forwards; }
       .slide-up { animation: slideUp 0.4s ease-out forwards; }
       .slide-in { animation: slideIn 0.3s ease-out forwards; }
       .scale-in { animation: scaleIn 0.25s ease-out forwards; }
-      
+      .float { animation: float 3s ease-in-out infinite; }
+
       /* Staggered Animations */
       .stagger-1 { animation-delay: 0.05s; opacity: 0; }
       .stagger-2 { animation-delay: 0.1s; opacity: 0; }
@@ -59,13 +71,13 @@ function GlobalStyles() {
       .stagger-5 { animation-delay: 0.25s; opacity: 0; }
       .stagger-6 { animation-delay: 0.3s; opacity: 0; }
 
-      /* Hover Effects */
+      /* Hover – Neumorphic Lift */
       .hover-lift {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
       }
       .hover-lift:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        box-shadow: 12px 12px 20px rgb(163,177,198,0.7), -12px -12px 20px rgba(255,255,255,0.6) !important;
       }
       .hover-scale {
         transition: transform 0.15s ease;
@@ -74,41 +86,43 @@ function GlobalStyles() {
         transform: scale(1.02);
       }
       .hover-glow {
-        transition: box-shadow 0.2s ease;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
       }
       .hover-glow:hover {
-        box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 12px 12px 20px rgb(163,177,198,0.7), -12px -12px 20px rgba(255,255,255,0.6) !important;
       }
 
-      /* Button Hover */
+      /* Button – Neumorphic Press */
       .btn-hover {
-        transition: all 0.2s ease;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
         position: relative;
         overflow: hidden;
       }
       .btn-hover:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       }
       .btn-hover:active {
-        transform: translateY(0);
+        transform: translateY(0.5px) !important;
+        box-shadow: inset 3px 3px 6px rgb(163,177,198,0.6), inset -3px -3px 6px rgba(255,255,255,0.5) !important;
       }
 
-      /* Card Hover */
+      /* Card – Neumorphic Lift on Hover */
       .card-hover {
-        transition: all 0.25s ease;
+        transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
       }
       .card-hover:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        transform: translateY(-2px);
+        box-shadow: 12px 12px 20px rgb(163,177,198,0.7), -12px -12px 20px rgba(255,255,255,0.6) !important;
       }
 
       /* Row Hover */
       .row-hover {
         transition: background-color 0.15s ease;
+        border-radius: 12px;
       }
       .row-hover:hover {
-        background-color: rgba(37, 99, 235, 0.04) !important;
+        background-color: rgba(108,99,255,0.05) !important;
       }
 
       /* Icon Hover */
@@ -119,18 +133,18 @@ function GlobalStyles() {
         transform: scale(1.1);
       }
 
-      /* Skeleton Loading */
+      /* Skeleton – Neumorphic shimmer */
       .skeleton {
-        background: linear-gradient(90deg, #e5e5e5 25%, #f0f0f0 50%, #e5e5e5 75%);
+        background: linear-gradient(90deg, #d5dae5 25%, #e4e9f2 50%, #d5dae5 75%);
         background-size: 200% 100%;
         animation: shimmer 1.5s infinite;
-        border-radius: 6px;
+        border-radius: 12px;
       }
       .skeleton-dark {
         background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%);
         background-size: 200% 100%;
         animation: shimmer 1.5s infinite;
-        border-radius: 6px;
+        border-radius: 12px;
       }
 
       /* Pulse Animation */
@@ -168,32 +182,34 @@ function GlobalStyles() {
 
       /* Transitions */
       .transition-all {
-        transition: all 0.2s ease;
+        transition: all 0.3s ease-out;
       }
       .transition-colors {
         transition: color 0.15s ease, background-color 0.15s ease;
       }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
+      /* Custom Scrollbar – Neumorphic */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
       ::-webkit-scrollbar-track {
-        background: transparent;
+        background: #E0E5EC;
+        border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb {
-        background: rgba(0,0,0,0.2);
-        border-radius: 3px;
+        background: rgb(163,177,198,0.7);
+        border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: rgba(0,0,0,0.3);
+        background: rgb(163,177,198,0.9);
       }
 
-      /* Focus States */
-      input:focus, select:focus, button:focus-visible {
+      /* Focus States – Neumorphic Accent Ring */
+      input:focus, select:focus, textarea:focus {
         outline: none;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        box-shadow: inset 10px 10px 20px rgb(163,177,198,0.7), inset -10px -10px 20px rgba(255,255,255,0.6), 0 0 0 2px rgba(108,99,255,0.25) !important;
+      }
+      button:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #E0E5EC, 0 0 0 4px rgba(108,99,255,0.5) !important;
       }
 
       /* Toast Animation */
@@ -210,10 +226,10 @@ function GlobalStyles() {
 function SkeletonCard({ dark }) {
   const cls = dark ? "skeleton-dark" : "skeleton";
   return (
-    <div style={{ padding: 16, borderRadius: 10, background: dark ? "#0a0a0a" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,.03)" : "rgba(0,0,0,.04)"}` }}>
-      <div className={cls} style={{ width: 32, height: 32, marginBottom: 12 }} />
-      <div className={cls} style={{ width: "60%", height: 24, marginBottom: 8 }} />
-      <div className={cls} style={{ width: "40%", height: 14 }} />
+    <div style={{ padding: 20, borderRadius: dark ? 14 : 32, background: dark ? "#0a0a0a" : "#E0E5EC", boxShadow: dark ? "0 2px 12px rgba(0,0,0,0.4)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
+      <div className={cls} style={{ width: 40, height: 40, borderRadius: 12, marginBottom: 14 }} />
+      <div className={cls} style={{ width: "60%", height: 24, marginBottom: 10, borderRadius: 8 }} />
+      <div className={cls} style={{ width: "40%", height: 14, borderRadius: 8 }} />
     </div>
   );
 }
@@ -372,7 +388,7 @@ function EmptyState({ icon = "box", title, description, action, onAction, dark }
       {title && <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: c.text }}>{title}</h3>}
       {description && <p style={{ margin: "0 0 20px", fontSize: 13, color: c.muted, maxWidth: 280, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>{description}</p>}
       {action && onAction && (
-        <button onClick={onAction} className="btn-hover" style={{ padding: "10px 20px", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+        <button onClick={onAction} className="btn-hover" style={{ padding: "10px 22px", background: "#6C63FF", color: "#fff", border: "none", borderRadius: 16, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)" }}>
           <Plus size={16} /> {action}
         </button>
       )}
@@ -383,19 +399,26 @@ function EmptyState({ icon = "box", title, description, action, onAction, dark }
 // ============================================
 // THEMES & TRANSLATIONS
 // ============================================
-const LIGHT = { 
-  bg:"#fafafa",card:"#fff",cardBorder:"rgba(0,0,0,.04)",
-  text:"#1a1a1a",textSec:"#525252",textMuted:"#737373",textFaint:"#a3a3a3",
-  input:"#fff",inputBorder:"#e5e5e5",
-  headerBg:"rgba(255,255,255,.8)",headerBorder:"#ebebeb",
-  tableBg:"#fafafa",tableRowBorder:"#f0f0f0",
-  tagBg:"#f0f7ff",modalBg:"#fff",overlayBg:"rgba(0,0,0,.4)",
-  confirmBg:"#f5f5f5",urgentBg:"#fef2f2",
-  sidebarBg:"#1a1a1a",pillBg:"#f5f5f5",pillActive:"#fff",
-  accent:"#2563eb",accentLight:"#dbeafe",accentDark:"#1d4ed8"
+const LIGHT = {
+  bg:"#E0E5EC",card:"#E0E5EC",cardBorder:"transparent",
+  text:"#3D4852",textSec:"#3D4852",textMuted:"#6B7280",textFaint:"#9CA3AF",
+  input:"#E0E5EC",inputBorder:"transparent",
+  headerBg:"rgba(224,229,236,0.92)",headerBorder:"transparent",
+  tableBg:"#E0E5EC",tableRowBorder:"rgba(163,177,198,0.25)",
+  tagBg:"rgba(108,99,255,0.1)",modalBg:"#E0E5EC",overlayBg:"rgba(0,0,0,.4)",
+  confirmBg:"#E0E5EC",urgentBg:"rgba(239,68,68,0.08)",
+  sidebarBg:"#E0E5EC",pillBg:"#E0E5EC",pillActive:"#E0E5EC",
+  accent:"#6C63FF",accentLight:"rgba(108,99,255,0.12)",accentDark:"#5A52D5",
+  // Neumorphic shadow tokens
+  cardShadow:"9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)",
+  cardShadowSm:"5px 5px 10px rgb(163,177,198,0.6), -5px -5px 10px rgba(255,255,255,0.5)",
+  inputShadow:"inset 6px 6px 10px rgb(163,177,198,0.6), inset -6px -6px 10px rgba(255,255,255,0.5)",
+  inputShadowDeep:"inset 10px 10px 20px rgb(163,177,198,0.7), inset -10px -10px 20px rgba(255,255,255,0.6)",
+  insetSm:"inset 3px 3px 6px rgb(163,177,198,0.6), inset -3px -3px 6px rgba(255,255,255,0.5)",
+  cardRadius:32,inputRadius:16,btnRadius:16,
 };
 
-const DARK = { 
+const DARK = {
   bg:"#000",card:"#0a0a0a",cardBorder:"rgba(255,255,255,.03)",
   text:"#fafafa",textSec:"#d4d4d4",textMuted:"#a3a3a3",textFaint:"#525252",
   input:"#141414",inputBorder:"#1f1f1f",
@@ -404,7 +427,14 @@ const DARK = {
   tagBg:"#141414",modalBg:"#0a0a0a",overlayBg:"rgba(0,0,0,.8)",
   confirmBg:"#0a0a0a",urgentBg:"#1c0a0a",
   sidebarBg:"#000",pillBg:"#141414",pillActive:"#1a1a1a",
-  accent:"#3b82f6",accentLight:"#1e3a5f",accentDark:"#60a5fa"
+  accent:"#8B84FF",accentLight:"#1e1a4f",accentDark:"#6C63FF",
+  // Dark-mode shadow fallbacks (standard shadows, not neumorphic)
+  cardShadow:"0 2px 12px rgba(0,0,0,0.4)",
+  cardShadowSm:"0 1px 6px rgba(0,0,0,0.3)",
+  inputShadow:"inset 0 2px 4px rgba(0,0,0,0.3)",
+  inputShadowDeep:"inset 0 4px 8px rgba(0,0,0,0.4)",
+  insetSm:"inset 0 1px 3px rgba(0,0,0,0.3)",
+  cardRadius:14,inputRadius:10,btnRadius:8,
 };
 
 const T = {
@@ -575,7 +605,7 @@ function Modal({open,onClose,children}){
   if(!open)return null;
   return(
     <div className="fade-in" style={{position:"fixed",inset:0,background:c.overlayBg,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1000,padding:16}} onClick={onClose}>
-      <div className="scale-in" style={{background:c.modalBg,borderRadius:14,maxWidth:400,width:"100%",padding:24,boxShadow:"0 16px 48px rgba(0,0,0,.2)"}} onClick={e=>e.stopPropagation()}>
+      <div className="scale-in" style={{background:c.modalBg,borderRadius:c.cardRadius,maxWidth:420,width:"100%",padding:28,boxShadow:c.cardShadow}} onClick={e=>e.stopPropagation()}>
         {children}
       </div>
     </div>
@@ -617,22 +647,37 @@ function LoginPage({dark,toggleDark}){
   const[em,setEm]=useState("");const[pw,setPw]=useState("");const[showPw,setShowPw]=useState(false);const[loading,setLoading]=useState(false);const[err,setErr]=useState("");
   const c=dark?DARK:LIGHT;
   const submit=async(e)=>{e.preventDefault();setLoading(true);setErr("");const{error}=await supabase.auth.signInWithPassword({email:em,password:pw});if(error){setErr("Invalid email or password");setLoading(false);}};
+  const inp = {width:"100%",padding:"12px 14px",border:"none",borderRadius:c.inputRadius,fontSize:14,outline:"none",boxSizing:"border-box",background:c.input,color:c.text,boxShadow:c.inputShadow};
   return(
-    <div className="fade-in" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:dark?"#000":"#fafafa",padding:20}}>
-      <button onClick={toggleDark} className="btn-hover" style={{position:"fixed",top:16,right:16,background:dark?"#141414":"#f5f5f5",border:"none",borderRadius:8,padding:"8px 10px",cursor:"pointer",color:dark?"#a3a3a3":"#737373",display:"flex",alignItems:"center",gap:6,fontSize:12}}>{dark?<Sun size={14}/>:<Moon size={14}/>}</button>
-      <div className="slide-up" style={{width:"100%",maxWidth:360}}>
-        <div style={{textAlign:"center",marginBottom:32}}>
-          <div className="hover-scale" style={{width:48,height:48,borderRadius:12,background:"#2563eb",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px"}}><Package size={24} color="#fff"/></div>
-          <h1 style={{margin:0,fontSize:20,fontWeight:600,color:c.text}}>NGO Inventory</h1>
-          <p style={{margin:"4px 0 0",fontSize:13,color:c.textMuted}}>Donation Tracking & Distribution</p>
+    <div className="fade-in" style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:c.bg,padding:20}}>
+      <button onClick={toggleDark} className="btn-hover" style={{position:"fixed",top:16,right:16,background:c.card,border:"none",borderRadius:c.btnRadius,padding:"8px 12px",cursor:"pointer",color:c.textMuted,display:"flex",alignItems:"center",gap:6,fontSize:12,boxShadow:c.cardShadowSm}}>{dark?<Sun size={14}/>:<Moon size={14}/>}</button>
+      <div className="slide-up" style={{width:"100%",maxWidth:380}}>
+        <div style={{textAlign:"center",marginBottom:40}}>
+          {/* Extruded icon, then deep inset inner well */}
+          <div style={{width:72,height:72,borderRadius:20,background:c.card,boxShadow:c.cardShadow,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 20px"}}>
+            <div style={{width:48,height:48,borderRadius:14,background:c.card,boxShadow:c.inputShadow,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <Package size={22} color={c.accent}/>
+            </div>
+          </div>
+          <h1 style={{margin:0,fontSize:24,fontWeight:800,color:c.text,fontFamily:"'Plus Jakarta Sans', sans-serif",letterSpacing:"-0.5px"}}>NGO Inventory</h1>
+          <p style={{margin:"6px 0 0",fontSize:13,color:c.textMuted,fontWeight:500}}>Donation Tracking & Distribution</p>
         </div>
-        <div className="card-hover" style={{background:c.card,borderRadius:12,padding:24,border:`1px solid ${c.cardBorder}`}}>
-          <h2 style={{margin:"0 0 20px",fontSize:15,fontWeight:600,color:c.text}}>Sign in to your account</h2>
-          {err&&<div className="slide-up" style={{padding:"8px 12px",background:dark?"#1c0a0a":"#fef2f2",border:`1px solid ${dark?"#450a0a":"#fecaca"}`,borderRadius:8,color:"#ef4444",fontSize:12,marginBottom:14,display:"flex",alignItems:"center",gap:6}}><AlertTriangle size={14}/> {err}</div>}
-          <div style={{display:"flex",flexDirection:"column",gap:14}}>
-            <div><label style={{fontSize:12,fontWeight:500,color:c.textSec,display:"block",marginBottom:5}}>Email</label><input type="email" value={em} onChange={e=>setEm(e.target.value)} placeholder="you@example.com" className="transition-all" style={{width:"100%",padding:"9px 12px",border:`1px solid ${c.inputBorder}`,borderRadius:8,fontSize:13,outline:"none",boxSizing:"border-box",background:c.input,color:c.text}}/></div>
-            <div><label style={{fontSize:12,fontWeight:500,color:c.textSec,display:"block",marginBottom:5}}>Password</label><div style={{position:"relative"}}><input type={showPw?"text":"password"} value={pw} onChange={e=>setPw(e.target.value)} placeholder="Enter your password" className="transition-all" style={{width:"100%",padding:"9px 36px 9px 12px",border:`1px solid ${c.inputBorder}`,borderRadius:8,fontSize:13,outline:"none",boxSizing:"border-box",background:c.input,color:c.text}} onKeyDown={e=>e.key==="Enter"&&submit(e)}/><button onClick={()=>setShowPw(!showPw)} className="icon-hover" style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:c.textFaint}}>{showPw?<EyeOff size={16}/>:<Eye size={16}/>}</button></div></div>
-            <button onClick={submit} disabled={loading} className="btn-hover" style={{padding:"10px",background:loading?"#a3a3a3":"#2563eb",color:"#fff",border:"none",borderRadius:8,fontSize:13,fontWeight:600,cursor:loading?"not-allowed":"pointer",marginTop:2,display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+        <div className="card-hover" style={{background:c.card,borderRadius:c.cardRadius,padding:32,boxShadow:c.cardShadow}}>
+          <h2 style={{margin:"0 0 24px",fontSize:16,fontWeight:700,color:c.text,fontFamily:"'Plus Jakarta Sans', sans-serif"}}>Sign in to your account</h2>
+          {err&&<div className="slide-up" style={{padding:"10px 14px",background:"rgba(239,68,68,0.08)",borderRadius:12,color:"#ef4444",fontSize:13,marginBottom:18,display:"flex",alignItems:"center",gap:6,boxShadow:c.insetSm}}><AlertTriangle size={14}/> {err}</div>}
+          <div style={{display:"flex",flexDirection:"column",gap:18}}>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:c.textMuted,display:"block",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.06em"}}>Email</label>
+              <input type="email" value={em} onChange={e=>setEm(e.target.value)} placeholder="you@example.com" className="transition-all" style={inp}/>
+            </div>
+            <div>
+              <label style={{fontSize:12,fontWeight:600,color:c.textMuted,display:"block",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.06em"}}>Password</label>
+              <div style={{position:"relative"}}>
+                <input type={showPw?"text":"password"} value={pw} onChange={e=>setPw(e.target.value)} placeholder="Enter your password" className="transition-all" style={{...inp,paddingRight:44}} onKeyDown={e=>e.key==="Enter"&&submit(e)}/>
+                <button onClick={()=>setShowPw(!showPw)} className="icon-hover" style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:c.textFaint}}>{showPw?<EyeOff size={16}/>:<Eye size={16}/>}</button>
+              </div>
+            </div>
+            <button onClick={submit} disabled={loading} className="btn-hover" style={{padding:"13px",background:loading?"#9CA3AF":c.accent,color:"#fff",border:"none",borderRadius:c.btnRadius,fontSize:14,fontWeight:700,cursor:loading?"not-allowed":"pointer",marginTop:4,display:"flex",alignItems:"center",justifyContent:"center",gap:8,boxShadow:loading?"none":"5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)",letterSpacing:"0.02em"}}>
               {loading?<><LoadingSpinner size={16} color="#fff"/> Signing in...</>:"Sign In"}
             </button>
           </div>
@@ -649,31 +694,38 @@ function StatCard({icon,label,value,color,trend,delay=0}){
   const{c}=useApp();
   const delayClass = delay > 0 ? `stagger-${Math.min(delay, 6)}` : '';
   return(
-    <div 
+    <div
       className={`hover-lift slide-up ${delayClass}`}
       style={{
         background:c.card,
-        borderRadius:10,
-        padding:"14px 16px",
+        borderRadius:c.cardRadius,
+        padding:"18px 20px",
         flex:"1 1 140px",
         minWidth:140,
-        border:`1px solid ${c.cardBorder}`,
+        boxShadow:c.cardShadow,
         display:"flex",
         flexDirection:"column",
-        gap:6,
+        gap:8,
         cursor:"default"
       }}
     >
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-        <div className="icon-hover" style={{width:32,height:32,borderRadius:8,background:color+"12",display:"flex",alignItems:"center",justifyContent:"center",color}}>{icon}</div>
+        {/* Deep-inset icon well — drilled into the surface */}
+        <div style={{
+          width:40,height:40,borderRadius:12,
+          background:c.card,
+          boxShadow:c.inputShadow,
+          display:"flex",alignItems:"center",justifyContent:"center",
+          color
+        }}>{icon}</div>
         {trend !== undefined && (
-          <span style={{fontSize:10,fontWeight:600,color:trend>0?"#10b981":"#ef4444",display:"flex",alignItems:"center",gap:2}}>
+          <span style={{fontSize:10,fontWeight:700,color:trend>0?"#10b981":"#ef4444",display:"flex",alignItems:"center",gap:2,background:trend>0?"rgba(16,185,129,0.1)":"rgba(239,68,68,0.1)",padding:"3px 7px",borderRadius:20}}>
             {trend>0?"↑":"↓"}{Math.abs(trend)}%
           </span>
         )}
       </div>
-      <div style={{fontSize:22,fontWeight:600,color:c.text,letterSpacing:"-0.5px"}}>{value}</div>
-      <div style={{fontSize:11,color:c.textMuted,fontWeight:500}}>{label}</div>
+      <div style={{fontSize:24,fontWeight:700,color:c.text,letterSpacing:"-0.5px",fontFamily:"'Plus Jakarta Sans', sans-serif"}}>{value}</div>
+      <div style={{fontSize:11,color:c.textMuted,fontWeight:500,letterSpacing:"0.02em",textTransform:"uppercase"}}>{label}</div>
     </div>
   );
 }
@@ -726,13 +778,14 @@ const CHART_COLORS = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#0
 function Badge({ children, color, bg }) {
   return (
     <span style={{
-      padding: "3px 8px",
-      borderRadius: 6,
+      padding: "3px 10px",
+      borderRadius: 20,
       fontSize: 11,
-      fontWeight: 600,
-      background: bg || (color ? color + "20" : "#e5e5e5"),
-      color: color || "#525252",
-      display: "inline-block"
+      fontWeight: 700,
+      background: bg || (color ? color + "15" : "rgba(107,114,128,0.1)"),
+      color: color || "#6B7280",
+      display: "inline-block",
+      letterSpacing: "0.02em"
     }}>
       {children}
     </span>
@@ -747,22 +800,21 @@ function Toast({ message, type = "success" }) {
     success: <CheckCircle size={18} color="#10b981" />,
     error: <AlertTriangle size={18} color="#ef4444" />,
     warning: <AlertTriangle size={18} color="#f59e0b" />,
-    info: <Package size={18} color="#2563eb" />
+    info: <Package size={18} color="#6C63FF" />
   };
-  const colors = {
-    success: { bg: "#ecfdf5", border: "#10b981", text: "#065f46" },
-    error: { bg: "#fef2f2", border: "#ef4444", text: "#991b1b" },
-    warning: { bg: "#fffbeb", border: "#f59e0b", text: "#92400e" },
-    info: { bg: "#eff6ff", border: "#2563eb", text: "#1e40af" }
-  };
-  const style = colors[type] || colors.success;
+  const accent = { success:"#10b981", error:"#ef4444", warning:"#f59e0b", info:"#6C63FF" };
+  const col = accent[type] || accent.success;
   return (
     <div className="slide-up" style={{
-      position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
-      background: style.bg, border: `1px solid ${style.border}`, color: style.text,
-      padding: "12px 20px", borderRadius: 12, fontWeight: 500, zIndex: 3000,
-      boxShadow: "0 8px 30px rgba(0,0,0,0.12)", fontSize: 14,
-      display: "flex", alignItems: "center", gap: 10, maxWidth: "90vw"
+      position: "fixed", bottom: 28, left: "50%", transform: "translateX(-50%)",
+      background: "#E0E5EC",
+      borderLeft: `4px solid ${col}`,
+      color: "#3D4852",
+      padding: "14px 22px", borderRadius: 20, fontWeight: 600, zIndex: 3000,
+      boxShadow: "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)",
+      fontSize: 14,
+      display: "flex", alignItems: "center", gap: 10, maxWidth: "90vw",
+      whiteSpace: "nowrap"
     }}>
       {icons[type]}{message}
     </div>
@@ -816,7 +868,7 @@ function Dashboard({ items, giftCards, distributions }) {
     }
   }, [items, view]);
 
-  const card = { background: c.card, borderRadius: 14, padding: 20, border: `1px solid ${c.cardBorder}` };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 24, boxShadow: c.cardShadow };
 
   if (items.length === 0 && giftCards.length === 0) {
     return <SkeletonDashboard dark={dark} />;
@@ -871,12 +923,13 @@ function Dashboard({ items, giftCards, distributions }) {
       <div className="card-hover" style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
           <h3 style={{ margin: 0, fontSize: 13, fontWeight: 600, color: c.text }}>{t.trendsOverTime}</h3>
-          <div style={{ display: "flex", background: c.pillBg, borderRadius: 6, padding: 2 }}>
+          <div style={{ display: "flex", background: c.pillBg, borderRadius: 14, padding: 4, boxShadow: c.insetSm }}>
             {["monthly", "yearly"].map(v => (
-              <button key={v} onClick={() => setView(v)} className="transition-colors" style={{
-                padding: "5px 12px", borderRadius: 5, border: "none", fontSize: 11, fontWeight: 600, cursor: "pointer",
-                background: view === v ? c.pillActive : "transparent",
-                color: view === v ? "#2563eb" : c.textMuted
+              <button key={v} onClick={() => setView(v)} className="transition-colors btn-hover" style={{
+                padding: "6px 14px", borderRadius: 10, border: "none", fontSize: 11, fontWeight: 700, cursor: "pointer",
+                background: view === v ? c.card : "transparent",
+                color: view === v ? c.accent : c.textMuted,
+                boxShadow: view === v ? c.cardShadowSm : "none"
               }}>
                 {v === "monthly" ? t.monthly : t.yearly}
               </button>
@@ -1075,9 +1128,9 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
     setShowConfirm(true);
   };
 
-  const inp = { width: "100%", padding: "11px 14px", border: `1px solid ${c.inputBorder}`, borderRadius: 10, fontSize: 14, boxSizing: "border-box", outline: "none", background: c.input, color: c.text };
-  const lbl = { fontSize: 13, fontWeight: 600, color: c.textSec, marginBottom: 6, display: "block" };
-  const card = { background: c.card, borderRadius: 14, padding: 28, boxShadow: `0 1px 3px ${c.cardBorder}` };
+  const inp = { width: "100%", padding: "12px 14px", border: "none", borderRadius: c.inputRadius, fontSize: 14, boxSizing: "border-box", outline: "none", background: c.input, color: c.text, boxShadow: c.inputShadow };
+  const lbl = { fontSize: 12, fontWeight: 600, color: c.textMuted, marginBottom: 8, display: "block", textTransform: "uppercase", letterSpacing: "0.05em" };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 28, boxShadow: c.cardShadow };
 
   return (
     <>
@@ -1115,8 +1168,8 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
           </div>
         )}
         <div style={{ display: "flex", gap: 12 }}>
-          <button onClick={() => setShowConfirm(false)} className="btn-hover" style={{ flex: 1, padding: "11px", background: c.pillBg, color: c.textSec, border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{t.cancel}</button>
-          <button onClick={submit} disabled={saving} className="btn-hover" style={{ flex: 1, padding: "11px", background: "#4f46e5", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          <button onClick={() => setShowConfirm(false)} className="btn-hover" style={{ flex: 1, padding: "12px", background: c.card, color: c.textMuted, border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: c.cardShadowSm }}>{t.cancel}</button>
+          <button onClick={submit} disabled={saving} className="btn-hover" style={{ flex: 1, padding: "12px", background: c.accent, color: "#fff", border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, boxShadow: "5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)" }}>
             {saving && <LoadingSpinner size={16} color="#fff" />}
             {saving ? "..." : t.confirm}
           </button>
@@ -1252,10 +1305,12 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
                   </label>
                 )}
                 <button onClick={trySubmit} disabled={saving} className="btn-hover" style={{
-                  padding: "12px", background: saving ? "#94a3b8" : "#4f46e5", color: "#fff",
-                  border: "none", borderRadius: 10, fontSize: 15, fontWeight: 600,
+                  padding: "13px", background: saving ? "#9CA3AF" : c.accent, color: "#fff",
+                  border: "none", borderRadius: c.btnRadius, fontSize: 15, fontWeight: 700,
                   cursor: saving ? "not-allowed" : "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  boxShadow: saving ? "none" : "5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)",
+                  letterSpacing: "0.02em"
                 }}>
                   {saving ? <LoadingSpinner size={18} color="#fff" /> : <><Plus size={18} /> {isGiftCard ? t.logGiftCard : t.receiveBtn}</>}
                 </button>
@@ -1513,9 +1568,9 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
     }
   };
 
-  const inp = { padding: "10px 14px", border: `1px solid ${c.inputBorder}`, borderRadius: 10, fontSize: 13, outline: "none", background: c.input, color: c.text };
+  const inp = { padding: "10px 14px", border: "none", borderRadius: c.inputRadius, fontSize: 13, outline: "none", background: c.input, color: c.text, boxShadow: c.inputShadow };
   const isAdmin = profile?.role === "admin";
-  const card = { background: c.card, borderRadius: 14, padding: 20, boxShadow: `0 1px 3px ${c.cardBorder}` };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 20, boxShadow: c.cardShadow };
   const getShelfZone = (shelf) => ZONES.find(z => z.locations.includes(shelf?.toUpperCase()));
 
   return (
@@ -1528,8 +1583,8 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
           <h3 style={{ margin: "0 0 6px", fontSize: 18, fontWeight: 700, color: c.text }}>{t.confirmDelete}</h3>
           <p style={{ margin: "0 0 24px", fontSize: 13, color: c.textMuted }}>{t.confirmDeleteMsg}</p>
           <div style={{ display: "flex", gap: 12 }}>
-            <button onClick={() => setDelModal(null)} className="btn-hover" style={{ flex: 1, padding: "11px", background: c.pillBg, color: c.textSec, border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{t.cancel}</button>
-            <button onClick={confirmDelete} className="btn-hover" style={{ flex: 1, padding: "11px", background: "#e11d48", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{t.delete}</button>
+            <button onClick={() => setDelModal(null)} className="btn-hover" style={{ flex: 1, padding: "12px", background: c.card, color: c.textMuted, border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: c.cardShadowSm }}>{t.cancel}</button>
+            <button onClick={confirmDelete} className="btn-hover" style={{ flex: 1, padding: "12px", background: "#e11d48", color: "#fff", border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "4px 4px 8px rgba(225,29,72,0.3)" }}>{t.delete}</button>
           </div>
         </div>
       </Modal>
@@ -1549,13 +1604,13 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
           <input type="number" min="0" step="0.01" value={salePrice} onChange={e => setSalePrice(e.target.value)} placeholder="25.00" style={{ ...inp, width: "100%", boxSizing: "border-box" }} />
         </div>
         <div style={{ display: "flex", gap: 12 }}>
-          <button onClick={() => { setSellModal(null); setSalePrice(""); }} className="btn-hover" style={{ flex: 1, padding: "11px", background: c.pillBg, color: c.textSec, border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{t.cancel}</button>
-          <button onClick={confirmSell} className="btn-hover" style={{ flex: 1, padding: "11px", background: "#8b5cf6", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{t.confirmSale}</button>
+          <button onClick={() => { setSellModal(null); setSalePrice(""); }} className="btn-hover" style={{ flex: 1, padding: "12px", background: c.card, color: c.textMuted, border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: c.cardShadowSm }}>{t.cancel}</button>
+          <button onClick={confirmSell} className="btn-hover" style={{ flex: 1, padding: "12px", background: "#8b5cf6", color: "#fff", border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "4px 4px 8px rgba(139,92,246,0.3)" }}>{t.confirmSale}</button>
         </div>
       </Modal>
 
-      <h2 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700, color: c.text, display: "flex", alignItems: "center", gap: 10 }}>
-        <Warehouse size={20} color="#4f46e5" /> {t.fullInventory}
+      <h2 style={{ margin: "0 0 20px", fontSize: 20, fontWeight: 800, color: c.text, display: "flex", alignItems: "center", gap: 10, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: "-0.3px" }}>
+        <Warehouse size={20} color={c.accent} /> {t.fullInventory}
       </h2>
 
       <div className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
@@ -1615,11 +1670,12 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
                         disabled={!locInput[i.id]}
                         className="btn-hover"
                         style={{
-                          padding: "8px 14px",
-                          background: locInput[i.id] ? "#4f46e5" : "#94a3b8",
-                          color: "#fff", border: "none", borderRadius: 8,
+                          padding: "8px 16px",
+                          background: locInput[i.id] ? c.accent : "#9CA3AF",
+                          color: "#fff", border: "none", borderRadius: c.btnRadius,
                           fontSize: 12, cursor: locInput[i.id] ? "pointer" : "not-allowed",
-                          fontWeight: 600, display: "flex", alignItems: "center", gap: 4
+                          fontWeight: 700, display: "flex", alignItems: "center", gap: 4,
+                          boxShadow: locInput[i.id] ? "4px 4px 8px rgb(163,177,198,0.5), -4px -4px 8px rgba(255,255,255,0.4)" : "none"
                         }}
                       >
                         <ArrowRight size={14} /> {lang === "es" ? "Asignar" : "Assign"}
@@ -1883,8 +1939,8 @@ function DistributeView({ items, addItem, updateItem, addDistribution, showToast
     setSaving(false);
   };
 
-  const inp = { padding: "10px 14px", border: `1px solid ${c.inputBorder}`, borderRadius: 10, fontSize: 14, outline: "none", background: c.input, color: c.text, width: "100%", boxSizing: "border-box" };
-  const card = { background: c.card, borderRadius: 14, padding: 24, boxShadow: `0 1px 3px ${c.cardBorder}` };
+  const inp = { padding: "10px 14px", border: "none", borderRadius: c.inputRadius, fontSize: 14, outline: "none", background: c.input, color: c.text, width: "100%", boxSizing: "border-box", boxShadow: c.inputShadow };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 24, boxShadow: c.cardShadow };
 
   return (
     <div className="fade-in">
@@ -2111,10 +2167,11 @@ function DistributeView({ items, addItem, updateItem, addDistribution, showToast
                 </div>
 
                 <button onClick={() => setShowConfirm(true)} disabled={cart.length === 0 || (recipientMode === "new" && !newRecipient.name.trim())} className="btn-hover" style={{
-                  width: "100%", padding: 14, background: (cart.length === 0 || (recipientMode === "new" && !newRecipient.name.trim())) ? "#a3a3a3" : "#10b981",
-                  color: "#fff", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 600,
+                  width: "100%", padding: 14, background: (cart.length === 0 || (recipientMode === "new" && !newRecipient.name.trim())) ? "#9CA3AF" : "#10b981",
+                  color: "#fff", border: "none", borderRadius: c.btnRadius, fontSize: 15, fontWeight: 700,
                   cursor: (cart.length === 0 || (recipientMode === "new" && !newRecipient.name.trim())) ? "not-allowed" : "pointer",
-                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  boxShadow: (cart.length === 0 || (recipientMode === "new" && !newRecipient.name.trim())) ? "none" : "5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)"
                 }}>
                   <Truck size={18} /> {lang === "es" ? "Distribuir" : "Distribute"} ({cartTotal})
                 </button>
@@ -2141,11 +2198,11 @@ function GiftCardsView({ giftCards }) {
     return Object.entries(d).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   }, [giftCards]);
 
-  const card = { background: c.card, borderRadius: 14, padding: 24, boxShadow: `0 1px 3px ${c.cardBorder}` };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 24, boxShadow: c.cardShadow };
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div className="card-hover hover-glow" style={{ ...card, background: `linear-gradient(135deg, ${c.card} 0%, ${dark ? "#0f172a" : "#f0f9ff"} 100%)` }}>
+      <div className="card-hover hover-glow" style={{ ...card }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 56, height: 56, borderRadius: 14, background: "#f59e0b15", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <CreditCard size={28} color="#f59e0b" />
@@ -2248,8 +2305,8 @@ function ReportsView({ items, giftCards, distributions }) {
     XLSX.writeFile(wb, `NGO_Report_${new Date().toISOString().split("T")[0]}.xlsx`);
   };
 
-  const card = { background: c.card, borderRadius: 14, padding: 24, boxShadow: `0 1px 3px ${c.cardBorder}` };
-  const stat = { padding: "20px 16px", background: c.confirmBg, borderRadius: 12, textAlign: "center" };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 24, boxShadow: c.cardShadow };
+  const stat = { padding: "20px 16px", background: c.card, borderRadius: dark ? 12 : 20, textAlign: "center", boxShadow: c.cardShadowSm };
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -2259,13 +2316,13 @@ function ReportsView({ items, giftCards, distributions }) {
             <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: c.text }}>{t.yearEndReport}</h2>
             <p style={{ margin: "4px 0 0", fontSize: 13, color: c.textMuted }}>{t.generated}: {new Date().toLocaleDateString()}</p>
           </div>
-          <button onClick={downloadExcel} className="btn-hover" style={{ padding: "10px 18px", background: "#10b981", color: "#fff", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+          <button onClick={downloadExcel} className="btn-hover" style={{ padding: "11px 20px", background: "#10b981", color: "#fff", border: "none", borderRadius: c.btnRadius, fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, boxShadow: "4px 4px 8px rgba(16,185,129,0.3)" }}>
             <Download size={16} /> {t.downloadExcel}
           </button>
         </div>
 
-        <div className="card-hover hover-glow" style={{ background: `linear-gradient(135deg, ${dark ? "#1e3a5f" : "#eff6ff"} 0%, ${dark ? "#0c4a6e" : "#dbeafe"} 100%)`, borderRadius: 12, padding: 20, marginBottom: 20 }}>
-          <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: dark ? "#93c5fd" : "#1d4ed8" }}>{t.executiveSummary}</h3>
+        <div className="card-hover" style={{ background: c.card, borderRadius: dark ? 12 : 24, padding: 20, marginBottom: 20, boxShadow: c.insetSm }}>
+          <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: c.accent, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{t.executiveSummary}</h3>
           <div className="grid-responsive stack-mobile" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
             {[
               { label: t.itemsReceived, value: totalRec, color: "#2563eb" },
@@ -2370,16 +2427,16 @@ function CalendarView({ items, distributions, giftCards }) {
   const dayNames = lang === "es" ? ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthNames = lang === "es" ? ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"] : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  const card = { background: c.card, borderRadius: 14, padding: 20, boxShadow: `0 1px 3px ${c.cardBorder}` };
+  const card = { background: c.card, borderRadius: c.cardRadius, padding: 20, boxShadow: c.cardShadow };
   const selectedData = selectedDate ? getDayData(selectedDate) : null;
 
   return (
     <div className="fade-in grid-responsive" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20 }}>
       <div className="card-hover" style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <button onClick={prevMonth} className="btn-hover" style={{ padding: "8px 14px", background: c.pillBg, border: "none", borderRadius: 8, cursor: "pointer", color: c.text, fontSize: 14 }}>←</button>
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: c.text }}>{monthNames[month]} {year}</h2>
-          <button onClick={nextMonth} className="btn-hover" style={{ padding: "8px 14px", background: c.pillBg, border: "none", borderRadius: 8, cursor: "pointer", color: c.text, fontSize: 14 }}>→</button>
+          <button onClick={prevMonth} className="btn-hover" style={{ padding: "8px 14px", background: c.card, border: "none", borderRadius: c.btnRadius, cursor: "pointer", color: c.text, fontSize: 14, boxShadow: c.cardShadowSm }}>←</button>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: c.text, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{monthNames[month]} {year}</h2>
+          <button onClick={nextMonth} className="btn-hover" style={{ padding: "8px 14px", background: c.card, border: "none", borderRadius: c.btnRadius, cursor: "pointer", color: c.text, fontSize: 14, boxShadow: c.cardShadowSm }}>→</button>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 8 }}>
@@ -2401,13 +2458,21 @@ function CalendarView({ items, distributions, giftCards }) {
                 onClick={() => setSelectedDate(day)}
                 className="hover-scale"
                 style={{
-                  padding: 8, borderRadius: 10, cursor: "pointer",
-                  background: isSelected ? c.accent : isToday ? c.tagBg : hasActivity ? c.confirmBg : "transparent",
-                  border: isToday && !isSelected ? `2px solid ${c.accent}` : `2px solid transparent`,
-                  minHeight: 70, display: "flex", flexDirection: "column"
+                  padding: 8, borderRadius: dark ? 10 : 16, cursor: "pointer",
+                  background: c.card,
+                  boxShadow: isSelected
+                    ? `inset 6px 6px 10px rgb(163,177,198,0.6), inset -6px -6px 10px rgba(255,255,255,0.5), 0 0 0 2px ${c.accent}`
+                    : isToday
+                    ? c.cardShadowSm
+                    : hasActivity
+                    ? c.cardShadowSm
+                    : "none",
+                  minHeight: 70, display: "flex", flexDirection: "column",
+                  outline: isToday && !isSelected ? `2px solid ${c.accent}` : "none",
+                  outlineOffset: "-2px"
                 }}
               >
-                <div style={{ fontSize: 13, fontWeight: isToday || isSelected ? 700 : 500, color: isSelected ? "#fff" : c.text, marginBottom: 4 }}>{day}</div>
+                <div style={{ fontSize: 13, fontWeight: isToday || isSelected ? 700 : 500, color: isSelected ? c.accent : c.text, marginBottom: 4 }}>{day}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                   {data.received > 0 && <div style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: isSelected ? "rgba(255,255,255,0.2)" : "#2563eb20", color: isSelected ? "#fff" : "#2563eb", fontWeight: 600 }}>+{data.received}</div>}
                   {data.distributed > 0 && <div style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: isSelected ? "rgba(255,255,255,0.2)" : "#10b98120", color: isSelected ? "#fff" : "#10b981", fontWeight: 600 }}>↑{data.distributed}</div>}
@@ -2509,6 +2574,12 @@ function App() {
 
   const c = dark ? DARK : LIGHT;
   const t = T[lang];
+
+  // Keep html/body background in sync with theme so no white edges ever show
+  useEffect(() => {
+    document.documentElement.style.background = c.bg;
+    document.body.style.background = c.bg;
+  }, [c.bg]);
 
   const showToast = (msg, type = "success") => {
     setToast({ message: msg, type });
@@ -2668,50 +2739,66 @@ function App() {
         {toast && <Toast message={toast.message} type={toast.type} />}
 
         {sidebarOpen && <div className="fade-in" style={{ position: "fixed", inset: 0, background: c.overlayBg, zIndex: 998 }} onClick={() => setSidebarOpen(false)} />}
-        <div className="slide-in" style={{ position: "fixed", top: 0, left: sidebarOpen ? 0 : -280, width: 260, height: "100vh", background: c.sidebarBg, zIndex: 999, transition: "left .25s ease", padding: "24px 16px", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 32, paddingLeft: 4 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center" }}><Package size={20} color="#fff" /></div>
+        {/* Sidebar — same #E0E5EC material in light mode, extruded panel */}
+        <div style={{ position: "fixed", top: 0, left: sidebarOpen ? 0 : -290, width: 268, height: "100vh", background: c.sidebarBg, zIndex: 999, transition: "left .3s ease-out", padding: "28px 18px", boxSizing: "border-box", display: "flex", flexDirection: "column", boxShadow: dark ? "4px 0 24px rgba(0,0,0,0.6)" : "12px 0 32px rgb(163,177,198,0.5)" }}>
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 36, paddingLeft: 4 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 14, background: c.sidebarBg, boxShadow: dark ? "0 2px 8px rgba(0,0,0,0.4)" : c.cardShadow, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 30, height: 30, borderRadius: 9, background: c.sidebarBg, boxShadow: dark ? "inset 0 2px 4px rgba(0,0,0,0.3)" : c.inputShadow, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Package size={16} color={c.accent} />
+              </div>
+            </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{t.appName.split(" ")[0]}</div>
-              <div style={{ fontSize: 10, color: "#a3a3a3" }}>{t.appDesc.split(" ").slice(0, 2).join(" ")}</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: dark ? "#fff" : c.text, fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: "-0.3px" }}>{t.appName.split(" ")[0]}</div>
+              <div style={{ fontSize: 10, color: c.textMuted, fontWeight: 500 }}>{t.appDesc.split(" ").slice(0, 2).join(" ")}</div>
             </div>
           </div>
+
+          {/* Nav items */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
             {visiblePages.map(p => (
               <button key={p.id} onClick={() => { setPage(p.id); setSidebarOpen(false); }} className="btn-hover" style={{
-                display: "flex", alignItems: "center", gap: 12, padding: "12px 14px",
-                background: page === p.id ? "#2563eb" : "transparent",
-                color: page === p.id ? "#fff" : "#a3a3a3",
-                border: "none", borderRadius: 10, cursor: "pointer", fontSize: 13, fontWeight: 500, textAlign: "left", width: "100%"
+                display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
+                background: c.sidebarBg,
+                boxShadow: page === p.id ? (dark ? "inset 0 2px 4px rgba(0,0,0,0.3)" : c.insetSm) : "none",
+                color: page === p.id ? c.accent : (dark ? "#a3a3a3" : c.textMuted),
+                border: "none", borderRadius: dark ? 10 : 16, cursor: "pointer",
+                fontSize: 13, fontWeight: page === p.id ? 700 : 500, textAlign: "left", width: "100%"
               }}>
                 {p.icon}{p.label}
               </button>
             ))}
           </div>
-          <div style={{ borderTop: "1px solid #262626", paddingTop: 16 }}>
-            <div style={{ padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "#262626", display: "flex", alignItems: "center", justifyContent: "center" }}><User size={16} color="#a3a3a3" /></div>
+
+          {/* User + logout */}
+          <div style={{ borderTop: dark ? "1px solid #262626" : "none", paddingTop: dark ? 16 : 0, marginTop: 8 }}>
+            {!dark && <div style={{ height: 1, background: "rgba(163,177,198,0.3)", marginBottom: 16 }} />}
+            <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: c.sidebarBg, boxShadow: dark ? "inset 0 2px 4px rgba(0,0,0,0.3)" : c.insetSm, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <User size={16} color={c.textMuted} />
+              </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#fff" }}>{profile?.full_name || user?.email?.split("@")[0]}</div>
-                <div style={{ fontSize: 10, color: "#737373" }}>{roleLabels[profile?.role] || profile?.role}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: dark ? "#fff" : c.text }}>{profile?.full_name || user?.email?.split("@")[0]}</div>
+                <div style={{ fontSize: 10, color: c.textMuted }}>{roleLabels[profile?.role] || profile?.role}</div>
               </div>
             </div>
-            <button onClick={logout} className="btn-hover" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "transparent", color: "#ef4444", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 500, width: "100%", marginTop: 8 }}>
+            <button onClick={logout} className="btn-hover" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "transparent", color: "#ef4444", border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", fontSize: 12, fontWeight: 600, width: "100%", marginTop: 4 }}>
               <LogOut size={16} /> {t.logout}
             </button>
           </div>
         </div>
 
-        <header style={{ position: "sticky", top: 0, background: c.headerBg, backdropFilter: "blur(12px)", borderBottom: `1px solid ${c.headerBorder}`, padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 100 }}>
-          <button id="sidebar-btn" onClick={() => setSidebarOpen(true)} className="icon-hover" style={{ padding: 8, background: c.pillBg, border: "none", borderRadius: 8, cursor: "pointer", color: c.text }}><Menu size={18} /></button>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button id="lang-btn" onClick={() => setLang(lang === "en" ? "es" : "en")} className="btn-hover" style={{ padding: "6px 10px", background: c.pillBg, border: "none", borderRadius: 8, cursor: "pointer", color: c.textMuted, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}><Globe size={14} /> {lang.toUpperCase()}</button>
-            <button id="theme-btn" onClick={() => setDark(!dark)} className="icon-hover" style={{ padding: 8, background: c.pillBg, border: "none", borderRadius: 8, cursor: "pointer", color: c.textMuted }}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>
-            <button id="help-btn" onClick={() => setShowTutorial(true)} className="icon-hover" style={{ padding: 8, background: c.pillBg, border: "none", borderRadius: 8, cursor: "pointer", color: c.textMuted }}><HelpCircle size={16} /></button>
+        {/* Header — neumorphic extruded bar */}
+        <header style={{ position: "sticky", top: 0, background: c.headerBg, backdropFilter: "blur(16px)", borderBottom: dark ? `1px solid ${c.headerBorder}` : "none", boxShadow: dark ? "none" : "0 4px 12px rgb(163,177,198,0.35)", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 100 }}>
+          <button id="sidebar-btn" onClick={() => setSidebarOpen(true)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.text, boxShadow: c.cardShadowSm }}><Menu size={18} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button id="lang-btn" onClick={() => setLang(lang === "en" ? "es" : "en")} className="btn-hover" style={{ padding: "7px 12px", background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 5, boxShadow: c.cardShadowSm }}><Globe size={14} /> {lang.toUpperCase()}</button>
+            <button id="theme-btn" onClick={() => setDark(!dark)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>
+            <button id="help-btn" onClick={() => setShowTutorial(true)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}><HelpCircle size={16} /></button>
           </div>
         </header>
 
-        <main id="page-content" style={{ padding: 20, maxWidth: 1400, margin: "0 auto" }}>
+        <main id="page-content" style={{ padding: 24, maxWidth: 1400, margin: "0 auto" }}>
           {page === "dashboard" && <Dashboard items={items} giftCards={giftCards} distributions={distributions} />}
           {page === "receive" && <ReceiveForm items={items} giftCards={giftCards} addItem={addItem} addGiftCard={addGiftCard} addDonor={addDonor} showToast={showToast} />}
           {page === "inventory" && <InventoryView items={items} updateItem={updateItem} deleteItem={deleteItem} showToast={showToast} />}
@@ -2721,7 +2808,7 @@ function App() {
           {page === "calendar" && <CalendarView items={items} distributions={distributions} giftCards={giftCards} />}
         </main>
 
-        <footer style={{ textAlign: "center", padding: "20px", fontSize: 11, color: c.textFaint }}>NGO Inventory Manager v2.4 · © 2026</footer>
+        <footer style={{ textAlign: "center", padding: "24px", fontSize: 11, color: c.textFaint, letterSpacing: "0.04em", fontWeight: 500 }}>NGO Inventory Manager v2.4 · © 2026</footer>
       </div>
     </AppContext.Provider>
   );
