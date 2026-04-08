@@ -669,8 +669,101 @@ const T = {
 };
 
 const TUTORIAL_STEPS = {
-  en:[{target:"sidebar-btn",title:"Menu",desc:"Open this menu to navigate between sections. Each role sees different tabs.",position:"right"},{target:"lang-btn",title:"Language",desc:"Switch between English and Spanish instantly.",position:"left"},{target:"theme-btn",title:"Dark Mode",desc:"Toggle between light and dark themes for comfortable viewing.",position:"left"},{target:"help-btn",title:"Help",desc:"Click here anytime to replay this tutorial.",position:"left"},{target:"page-content",title:"Your Workspace",desc:"This is where all the action happens. Receive donations, manage inventory, distribute items, and view reports.",position:"top"}],
-  es:[{target:"sidebar-btn",title:"Menú",desc:"Abra este menú para navegar entre secciones. Cada rol ve diferentes pestañas.",position:"right"},{target:"lang-btn",title:"Idioma",desc:"Cambie entre inglés y español al instante.",position:"left"},{target:"theme-btn",title:"Modo Oscuro",desc:"Alterne entre temas claro y oscuro para una visualización cómoda.",position:"left"},{target:"help-btn",title:"Ayuda",desc:"Haga clic aquí en cualquier momento para repetir este tutorial.",position:"left"},{target:"page-content",title:"Su Espacio de Trabajo",desc:"Aquí es donde ocurre toda la acción. Reciba donaciones, gestione inventario, distribuya artículos y vea informes.",position:"top"}],
+  // Shown the very first time (global onboarding)
+  global: {
+    en:[
+      {target:"sidebar-btn",title:"Navigation Menu",desc:"Open this menu to switch between sections. Your role controls which tabs are visible.",position:"right"},
+      {target:"lang-btn",title:"Language",desc:"Switch between English and Spanish instantly — all labels update right away.",position:"left"},
+      {target:"theme-btn",title:"Dark Mode",desc:"Toggle between light and dark themes for comfortable viewing in any lighting.",position:"left"},
+      {target:"help-btn",title:"Help",desc:"Click here anytime to replay the tutorial for the current page.",position:"left"},
+      {target:"page-content",title:"Your Workspace",desc:"Each tab has its own guided tour. Navigate to any section and press Help (?) to learn what it does.",position:"top"},
+    ],
+    es:[
+      {target:"sidebar-btn",title:"Menú de Navegación",desc:"Abra este menú para cambiar entre secciones. Su rol controla qué pestañas son visibles.",position:"right"},
+      {target:"lang-btn",title:"Idioma",desc:"Cambie entre inglés y español al instante: todas las etiquetas se actualizan de inmediato.",position:"left"},
+      {target:"theme-btn",title:"Modo Oscuro",desc:"Alterne entre temas claro y oscuro para una visualización cómoda.",position:"left"},
+      {target:"help-btn",title:"Ayuda",desc:"Haga clic aquí en cualquier momento para repetir el tutorial de la página actual.",position:"left"},
+      {target:"page-content",title:"Su Espacio de Trabajo",desc:"Cada pestaña tiene su propio tour guiado. Navegue a cualquier sección y presione Ayuda (?) para aprender qué hace.",position:"top"},
+    ],
+  },
+  dashboard: {
+    en:[
+      {target:"dash-stats",title:"Overview Stats",desc:"Real-time totals: items received, in storage, distributed, gift card value, people served, and sales revenue.",position:"top"},
+      {target:"dash-charts",title:"Category & Status Charts",desc:"Visualize your inventory split by category and current status. Hover over chart segments for exact counts.",position:"top"},
+      {target:"dash-trends",title:"Trends Over Time",desc:"Toggle between monthly and yearly views to spot donation patterns and plan ahead.",position:"top"},
+    ],
+    es:[
+      {target:"dash-stats",title:"Estadísticas Generales",desc:"Totales en tiempo real: artículos recibidos, en almacén, distribuidos, tarjetas regalo, personas atendidas y ventas.",position:"top"},
+      {target:"dash-charts",title:"Gráficos",desc:"Visualice su inventario por categoría y estado actual. Pase el cursor sobre los segmentos para ver conteos exactos.",position:"top"},
+      {target:"dash-trends",title:"Tendencias",desc:"Alterne entre vistas mensuales y anuales para detectar patrones de donación.",position:"top"},
+    ],
+  },
+  receive: {
+    en:[
+      {target:"receive-form",title:"Log a Donation",desc:"Select a category — clothing, food, toiletries, gift cards, and more — then fill in the details and hit Receive.",position:"top"},
+      {target:"receive-donor",title:"Donor Info",desc:"Track who donated. Provide an email address and a formatted receipt is emailed to the donor automatically.",position:"top"},
+      {target:"receive-summary",title:"Last Entry",desc:"Your most recently logged donation appears here. Use it to verify what was just recorded without leaving the page.",position:"top"},
+    ],
+    es:[
+      {target:"receive-form",title:"Registrar Donación",desc:"Seleccione una categoría — ropa, alimentos, higiene, tarjetas regalo y más — luego complete los detalles.",position:"top"},
+      {target:"receive-donor",title:"Info del Donante",desc:"Rastree quién donó. Si ingresa un correo electrónico, el recibo se envía automáticamente.",position:"top"},
+      {target:"receive-summary",title:"Último Registro",desc:"Su donación más reciente aparece aquí para verificar los detalles sin salir de la página.",position:"top"},
+    ],
+  },
+  inventory: {
+    en:[
+      {target:"inv-floorplan",title:"Storage Map",desc:"Interactive floor plan showing every shelf and zone. Zones are color-coded by category. Click a zone to filter.",position:"top"},
+      {target:"inv-pending",title:"Assign Location",desc:"Newly received items without a shelf appear here. Pick a shelf from the dropdown and click Assign to place them.",position:"top"},
+      {target:"inv-filters",title:"Search & Filter",desc:"Find items by ID, donor name, or category. Use the status filter to focus on Received, In Storage, Distributed, or Sold items.",position:"top"},
+    ],
+    es:[
+      {target:"inv-floorplan",title:"Mapa de Almacén",desc:"Plano interactivo con cada estantería y zona codificada por color según la categoría.",position:"top"},
+      {target:"inv-pending",title:"Asignar Ubicación",desc:"Los artículos recibidos sin estantería aparecen aquí. Elija una estantería y haga clic en Asignar.",position:"top"},
+      {target:"inv-filters",title:"Buscar y Filtrar",desc:"Encuentre artículos por ID, donante o categoría. Use el filtro de estado para enfocarse.",position:"top"},
+    ],
+  },
+  distribute: {
+    en:[
+      {target:"dist-items",title:"Available Items",desc:"Everything currently in storage and ready to distribute. Click any item card to add it to the distribution basket.",position:"top"},
+      {target:"dist-recipient",title:"Recipient",desc:"Select an existing recipient or register a new one. Visit history is tracked automatically to prevent duplicate visits.",position:"top"},
+    ],
+    es:[
+      {target:"dist-items",title:"Artículos Disponibles",desc:"Todo lo que está en almacén y listo para distribuir. Haga clic en una tarjeta para añadirla a la canasta.",position:"top"},
+      {target:"dist-recipient",title:"Destinatario",desc:"Seleccione un destinatario existente o registre uno nuevo. El historial de visitas se registra automáticamente.",position:"top"},
+    ],
+  },
+  giftcards: {
+    en:[
+      {target:"gc-total",title:"Total Gift Card Value",desc:"The combined dollar value of all gift cards received. Covers retail, grocery, gas, restaurant, and other card types.",position:"top"},
+      {target:"gc-chart",title:"By Company",desc:"Pie chart showing how gift card value is distributed across different companies and store types.",position:"top"},
+      {target:"gc-list",title:"Transaction History",desc:"A full chronological log of every gift card donation, with donor info and amounts.",position:"top"},
+    ],
+    es:[
+      {target:"gc-total",title:"Total Tarjetas Regalo",desc:"Valor combinado en dólares de todas las tarjetas regalo recibidas.",position:"top"},
+      {target:"gc-chart",title:"Por Empresa",desc:"Gráfico circular que muestra cómo se distribuye el valor entre diferentes empresas.",position:"top"},
+      {target:"gc-list",title:"Historial de Transacciones",desc:"Registro cronológico completo de cada donación de tarjeta regalo.",position:"top"},
+    ],
+  },
+  reports: {
+    en:[
+      {target:"reports-header",title:"Year-End Report",desc:"A complete summary of all activity. Click Download Excel to get a spreadsheet with separate sheets for items, gift cards, and more.",position:"top"},
+      {target:"reports-stats",title:"Impact Statistics",desc:"People served, families and individuals helped, sales revenue, estimated inventory value, and distribution rate — all in one place.",position:"top"},
+    ],
+    es:[
+      {target:"reports-header",title:"Informe Anual",desc:"Resumen completo de toda la actividad. Haga clic en Descargar Excel para obtener una hoja de cálculo detallada.",position:"top"},
+      {target:"reports-stats",title:"Estadísticas de Impacto",desc:"Personas atendidas, familias e individuos, ingresos por ventas, valor estimado y tasa de distribución.",position:"top"},
+    ],
+  },
+  calendar: {
+    en:[
+      {target:"cal-main",title:"Activity Calendar",desc:"Navigate months with the arrows. Days with donations or distributions are highlighted with color-coded badges.",position:"top"},
+      {target:"cal-detail",title:"Day Details",desc:"Click any day to see a breakdown of what was received, distributed, and gifted on that specific date.",position:"top"},
+    ],
+    es:[
+      {target:"cal-main",title:"Calendario de Actividad",desc:"Navegue por meses con las flechas. Los días con donaciones o distribuciones están resaltados con insignias.",position:"top"},
+      {target:"cal-detail",title:"Detalles del Día",desc:"Haga clic en cualquier día para ver un desglose de lo que ocurrió en esa fecha específica.",position:"top"},
+    ],
+  },
 };
 
 const CATEGORIES = [
@@ -709,27 +802,132 @@ function Modal({open,onClose,children}){
 }
 
 // ============================================
-// TUTORIAL (Enhanced with animation)
+// TUTORIAL
 // ============================================
-function Tutorial({onComplete,lang}){
-  const steps=TUTORIAL_STEPS[lang]||TUTORIAL_STEPS.en;const sk=lang==="es"?"Omitir":"Skip";const nx=lang==="es"?"Siguiente":"Next";const bk=lang==="es"?"Atrás":"Back";const dn=lang==="es"?"¡Entendido!":"Got It!";
-  const[step,setStep]=useState(0);const[pos,setPos]=useState({top:100,left:100,width:100,height:40});
-  useEffect(()=>{const el=document.getElementById(steps[step]?.target);if(el){const r=el.getBoundingClientRect();setPos({top:r.top,left:r.left,width:r.width,height:r.height});}},[step,steps]);
-  const s=steps[step];const ts=(()=>{const base={position:"fixed",background:"#fff",borderRadius:12,padding:"20px 24px",boxShadow:"0 16px 48px rgba(0,0,0,.2)",zIndex:2002,maxWidth:320,width:"90vw"};if(s.position==="right")return{...base,top:pos.top-10,left:pos.left+pos.width+12};if(s.position==="left")return{...base,top:pos.top-10,right:window.innerWidth-pos.left+12};return{...base,top:pos.top+pos.height+12,left:Math.max(16,pos.left-100)};})();
+function Tutorial({onComplete,lang,page}){
+  const pageSteps=TUTORIAL_STEPS[page]||TUTORIAL_STEPS.global;
+  const steps=pageSteps[lang]||pageSteps.en;
+  const lbl={sk:lang==="es"?"Omitir":"Skip",nx:lang==="es"?"Siguiente":"Next",bk:lang==="es"?"Atrás":"Back",dn:lang==="es"?"¡Entendido!":"Got It!"};
+  const[step,setStep]=useState(0);
+  // targetRect: the raw bounding rect of the highlighted element
+  const[rect,setRect]=useState({top:60,left:16,width:44,height:44});
+
+  // Measure target element on step change; Escape always closes
+  useEffect(()=>{
+    const measure=()=>{
+      const el=document.getElementById(steps[step]?.target);
+      if(el){const r=el.getBoundingClientRect();setRect({top:r.top,left:r.left,width:r.width,height:r.height});}
+    };
+    measure();
+    window.addEventListener("resize",measure);
+    return()=>window.removeEventListener("resize",measure);
+  },[step,steps]);
+
+  useEffect(()=>{
+    const onKey=e=>{if(e.key==="Escape")onComplete();};
+    window.addEventListener("keydown",onKey);
+    return()=>window.removeEventListener("keydown",onKey);
+  },[onComplete]);
+
+  const s=steps[step];
+  const vw=window.innerWidth;
+  const vh=window.innerHeight;
+  const TIP_W=300; // max tooltip width
+  const TIP_H=170; // approximate rendered height
+  const PAD=16;   // minimum edge gap
+
+  // For large elements (like the whole page content area) we only show a
+  // thin highlight band at the top so the spotlight doesn't explode.
+  const isLargeTarget=rect.height>200||rect.width>600;
+  const spotH=isLargeTarget?56:rect.height;
+  const spotTop=rect.top;
+  const spotLeft=isLargeTarget?PAD:rect.left;
+  const spotW=isLargeTarget?vw-PAD*2:rect.width;
+
+  // Compute tooltip position, clamped inside the viewport
+  const tipStyle=(()=>{
+    const base={
+      position:"fixed",
+      background:"#E0E5EC",
+      borderRadius:20,
+      padding:"20px 22px",
+      boxShadow:"9px 9px 16px rgb(163,177,198,0.6),-9px -9px 16px rgba(255,255,255,0.5)",
+      zIndex:2002,
+      width:`min(${TIP_W}px, calc(100vw - ${PAD*2}px))`,
+    };
+
+    let top,left,right;
+
+    if(s.position==="right"){
+      // Tooltip to the right of the target
+      left=rect.left+rect.width+14;
+      top=rect.top+(rect.height/2)-(TIP_H/2);
+      // If it would overflow right edge, flip to left
+      if(left+TIP_W>vw-PAD){left=undefined;right=vw-rect.left+14;}
+    } else if(s.position==="left"){
+      // Tooltip to the left of the target (right-anchored)
+      right=vw-rect.left+14;
+      top=rect.top+(rect.height/2)-(TIP_H/2);
+      // If it would overflow left edge, flip to right
+      if(vw-rect.left-14<TIP_W+PAD){right=undefined;left=rect.left+rect.width+14;}
+    } else {
+      // "top" position → place tooltip below the spotlight band, centered
+      top=spotTop+spotH+16;
+      left=vw/2-TIP_W/2;
+    }
+
+    // Clamp top into viewport
+    if(top!==undefined){
+      if(top+TIP_H>vh-PAD) top=spotTop-TIP_H-14; // flip above
+      top=Math.max(PAD,top);
+    }
+    // Clamp left
+    if(left!==undefined) left=Math.max(PAD,Math.min(left,vw-TIP_W-PAD));
+    // Clamp right
+    if(right!==undefined) right=Math.max(PAD,right);
+
+    return{...base,top,left,right};
+  })();
+
   return(
     <div style={{position:"fixed",inset:0,zIndex:2000}}>
-      <div className="fade-in" style={{position:"fixed",inset:0,background:"rgba(0,0,0,.6)"}}/>
-      <div style={{position:"fixed",top:pos.top-4,left:pos.left-4,width:pos.width+8,height:pos.height+8,border:"2px solid #2563eb",borderRadius:10,zIndex:2001,boxShadow:"0 0 0 4000px rgba(0,0,0,.5)",pointerEvents:"none",transition:"all .2s ease"}}/>
-      <div className="scale-in" style={ts}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-          <span style={{fontSize:11,color:"#a3a3a3",fontWeight:600}}>{step+1}/{steps.length}</span>
-          <button onClick={onComplete} className="btn-hover" style={{background:"none",border:"none",color:"#a3a3a3",cursor:"pointer",fontSize:12}}>{sk}</button>
+      {/* Dark overlay */}
+      <div className="fade-in" style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)"}}/>
+
+      {/* Spotlight cutout — sized to fit the target (capped for large elements) */}
+      <div style={{
+        position:"fixed",
+        top:spotTop-4,left:spotLeft-4,
+        width:spotW+8,height:spotH+8,
+        borderRadius:isLargeTarget?16:12,
+        zIndex:2001,
+        // The 4000px spread shadow creates the dark overlay with a hole cut out
+        boxShadow:"0 0 0 4000px rgba(0,0,0,0.55), 0 0 0 2px #6C63FF",
+        pointerEvents:"none",
+        transition:"all 0.3s ease"
+      }}/>
+
+      {/* Tooltip card */}
+      <div className="scale-in" style={tipStyle}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+          <span style={{fontSize:11,fontWeight:700,color:"#6C63FF",background:"rgba(108,99,255,0.12)",padding:"3px 9px",borderRadius:20}}>
+            {step+1} / {steps.length}
+          </span>
+          <button onClick={onComplete} className="btn-hover" style={{background:"none",border:"none",color:"#9CA3AF",cursor:"pointer",fontSize:12,fontWeight:600,padding:"4px 6px",borderRadius:8,display:"flex",alignItems:"center",gap:4,minHeight:"auto"}}>
+            <X size={13}/> {lbl.sk}
+          </button>
         </div>
-        <h3 style={{margin:"0 0 6px",fontSize:15,fontWeight:600,color:"#1a1a1a"}}>{s.title}</h3>
-        <p style={{margin:"0 0 16px",fontSize:13,color:"#737373",lineHeight:1.5}}>{s.desc}</p>
+        <h3 style={{margin:"0 0 6px",fontSize:15,fontWeight:700,color:"#3D4852",fontFamily:"'Plus Jakarta Sans',sans-serif"}}>{s.title}</h3>
+        <p style={{margin:"0 0 18px",fontSize:13,color:"#6B7280",lineHeight:1.6}}>{s.desc}</p>
         <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
-          {step>0&&<button onClick={()=>setStep(step-1)} className="btn-hover" style={{padding:"7px 14px",background:"#f5f5f5",color:"#525252",border:"none",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer"}}>{bk}</button>}
-          <button onClick={()=>step<steps.length-1?setStep(step+1):onComplete()} className="btn-hover" style={{padding:"7px 16px",background:"#2563eb",color:"#fff",border:"none",borderRadius:8,fontSize:12,fontWeight:600,cursor:"pointer"}}>{step<steps.length-1?nx:dn}</button>
+          {step>0&&(
+            <button onClick={()=>setStep(step-1)} className="btn-hover" style={{padding:"8px 16px",background:"#E0E5EC",color:"#6B7280",border:"none",borderRadius:12,fontSize:12,fontWeight:600,cursor:"pointer",boxShadow:"5px 5px 10px rgb(163,177,198,0.6),-5px -5px 10px rgba(255,255,255,0.5)",minHeight:"auto"}}>
+              {lbl.bk}
+            </button>
+          )}
+          <button onClick={()=>step<steps.length-1?setStep(step+1):onComplete()} className="btn-hover" style={{padding:"8px 20px",background:"#6C63FF",color:"#fff",border:"none",borderRadius:12,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:"4px 4px 8px rgba(108,99,255,0.35)",minHeight:"auto"}}>
+            {step<steps.length-1?lbl.nx:lbl.dn}
+          </button>
         </div>
       </div>
     </div>
@@ -972,7 +1170,7 @@ function Dashboard({ items, giftCards, distributions }) {
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div className="stat-cards-row" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      <div id="dash-stats" className="stat-cards-row" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <StatCard icon={<Package size={16} />} label={t.totalReceived} value={totalQty} color="#2563eb" delay={1} />
         <StatCard icon={<Warehouse size={16} />} label={t.inStorage} value={inStock} color="#0ea5e9" delay={2} />
         <StatCard icon={<Truck size={16} />} label={t.distributed} value={dist} color="#10b981" delay={3} />
@@ -982,7 +1180,7 @@ function Dashboard({ items, giftCards, distributions }) {
         {urgent > 0 && <StatCard icon={<AlertTriangle size={16} />} label={t.urgentItems} value={urgent} color="#ef4444" delay={7} />}
       </div>
 
-      <div className="grid-responsive" style={{ gap: 12 }}>
+      <div id="dash-charts" className="grid-responsive" style={{ gap: 12 }}>
         <div className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600, color: c.text }}>{t.inventoryByCategory}</h3>
           {catData.length === 0 ? (
@@ -1016,7 +1214,7 @@ function Dashboard({ items, giftCards, distributions }) {
         </div>
       </div>
 
-      <div className="card-hover" style={card}>
+      <div id="dash-trends" className="card-hover" style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 10 }}>
           <h3 style={{ margin: 0, fontSize: 13, fontWeight: 600, color: c.text }}>{t.trendsOverTime}</h3>
           <div style={{ display: "flex", background: c.pillBg, borderRadius: 14, padding: 4, boxShadow: c.insetSm }}>
@@ -1273,12 +1471,12 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
       </Modal>
 
       <div className="fade-in grid-responsive" style={{ gap: 20 }}>
-        <div className="card-hover" style={card}>
+        <div id="receive-form" className="card-hover" style={card}>
           <h2 style={{ margin: "0 0 24px", fontSize: 18, fontWeight: 700, color: c.text, display: "flex", alignItems: "center", gap: 10 }}>
             <Package size={20} color="#4f46e5" /> {t.receiveNew}
           </h2>
 
-          <div style={{ marginBottom: 20 }}>
+          <div id="receive-donor" style={{ marginBottom: 20 }}>
             <label style={lbl}>{t.donorType}</label>
             <div style={{ display: "flex", gap: 8 }}>
               {["individual", "organization"].map(dt => (
@@ -1415,7 +1613,7 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
           </div>
         </div>
 
-        <div className="card-hover" style={card}>
+        <div id="receive-summary" className="card-hover" style={card}>
           <h2 style={{ margin: "0 0 24px", fontSize: 18, fontWeight: 700, color: c.text, display: "flex", alignItems: "center", gap: 10 }}>
             <ClipboardList size={20} color="#4f46e5" /> {t.lastEntry}
           </h2>
@@ -1710,14 +1908,14 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
       </h2>
 
       <div className="grid-responsive" style={{ gap: 20, marginBottom: 20 }}>
-        <div className="card-hover" style={card}>
+        <div id="inv-floorplan" className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: c.text, display: "flex", alignItems: "center", gap: 8 }}>
             <Home size={18} /> {lang === "es" ? "Mapa de Almacén" : "Storage Map"}
           </h3>
           <FloorPlan2D items={items} c={c} lang={lang} highlightShelf={highlightShelf} />
         </div>
 
-        <div className="card-hover" style={card}>
+        <div id="inv-pending" className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: c.text, display: "flex", alignItems: "center", gap: 8 }}>
             <Package size={18} /> {lang === "es" ? "Asignar Ubicación" : "Assign Location"}
             {pendingItems.length > 0 && <span className="pulse" style={{ background: "#f59e0b", color: "#fff", padding: "2px 8px", borderRadius: 10, fontSize: 11, fontWeight: 700 }}>{pendingItems.length}</span>}
@@ -1785,7 +1983,7 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
         </div>
       </div>
 
-      <div className="card-hover" style={card}>
+      <div id="inv-filters" className="card-hover" style={card}>
         <div className="stack-mobile" style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 16 }}>
           <div style={{ flex: "1 1 220px", position: "relative" }}>
             <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: c.textFaint }} />
@@ -2081,7 +2279,7 @@ function DistributeView({ items, addItem, updateItem, addDistribution, showToast
       </Modal>
 
       <div className="distribute-grid">
-        <div className="card-hover" style={card}>
+        <div id="dist-items" className="card-hover" style={card}>
           <div className="stack-mobile" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: c.text, display: "flex", alignItems: "center", gap: 10 }}>
               <Warehouse size={20} color="#4f46e5" /> {t.availableForDist}
@@ -2136,7 +2334,7 @@ function DistributeView({ items, addItem, updateItem, addDistribution, showToast
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="card-hover" style={card}>
+          <div id="dist-recipient" className="card-hover" style={card}>
             <h3 style={{ margin: "0 0 14px", fontSize: 15, fontWeight: 600, color: c.text, display: "flex", alignItems: "center", gap: 8 }}>
               <Users size={18} color="#4f46e5" /> {lang === "es" ? "Destinatario" : "Recipient"}
             </h3>
@@ -2298,7 +2496,7 @@ function GiftCardsView({ giftCards }) {
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div className="card-hover hover-glow" style={{ ...card }}>
+      <div id="gc-total" className="card-hover hover-glow" style={{ ...card }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 56, height: 56, borderRadius: 14, background: "#f59e0b15", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <CreditCard size={28} color="#f59e0b" />
@@ -2311,7 +2509,7 @@ function GiftCardsView({ giftCards }) {
       </div>
 
       <div className="grid-responsive" style={{ gap: 20 }}>
-        <div className="card-hover" style={card}>
+        <div id="gc-chart" className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: c.text }}>{t.byCompany}</h3>
           {byCompany.length === 0 ? (
             <EmptyState icon="chart" title={t.noData} dark={dark} />
@@ -2327,7 +2525,7 @@ function GiftCardsView({ giftCards }) {
           )}
         </div>
 
-        <div className="card-hover" style={card}>
+        <div id="gc-list" className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: c.text }}>{t.transactions}</h3>
           {giftCards.length === 0 ? (
             <EmptyState icon="box" title={t.noData} dark={dark} />
@@ -2406,7 +2604,7 @@ function ReportsView({ items, giftCards, distributions }) {
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div className="card-hover" style={card}>
+      <div id="reports-header" className="card-hover" style={card}>
         <div className="stack-mobile" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
           <div>
             <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: c.text }}>{t.yearEndReport}</h2>
@@ -2438,7 +2636,7 @@ function ReportsView({ items, giftCards, distributions }) {
           </div>
         </div>
 
-        <div className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 20 }}>
+        <div id="reports-stats" className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 20 }}>
           <div className="slide-up" style={{ ...stat, animationDelay: "0.1s" }}>
             <Users size={24} color="#8b5cf6" style={{ marginBottom: 8 }} />
             <div style={{ fontSize: 28, fontWeight: 800, color: c.text }}>{totalPpl}</div>
@@ -2528,7 +2726,7 @@ function CalendarView({ items, distributions, giftCards }) {
 
   return (
     <div className="fade-in calendar-grid">
-      <div className="card-hover" style={card}>
+      <div id="cal-main" className="card-hover" style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <button onClick={prevMonth} className="btn-hover" style={{ padding: "8px 14px", background: c.card, border: "none", borderRadius: c.btnRadius, cursor: "pointer", color: c.text, fontSize: 14, boxShadow: c.cardShadowSm }}>←</button>
           <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: c.text, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{monthNames[month]} {year}</h2>
@@ -2580,7 +2778,7 @@ function CalendarView({ items, distributions, giftCards }) {
         </div>
       </div>
 
-      <div className="card-hover slide-in" style={card}>
+      <div id="cal-detail" className="card-hover slide-in" style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: c.text, display: "flex", alignItems: "center", gap: 8 }}>
           <CalendarDays size={18} /> {selectedDate ? `${monthNames[month]} ${selectedDate}, ${year}` : (lang === "es" ? "Seleccionar día" : "Select a day")}
         </h3>
@@ -2662,6 +2860,7 @@ function App() {
   const [page, setPage] = useState("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [tutorialPage, setTutorialPage] = useState("global");
   const [items, setItems] = useState([]);
   const [giftCards, setGiftCards] = useState([]);
   const [distributions, setDistributions] = useState([]);
@@ -2700,6 +2899,7 @@ function App() {
       const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
       setProfile(data);
       if (data && !localStorage.getItem("tutorial_done")) {
+        setTutorialPage("global");
         setShowTutorial(true);
         localStorage.setItem("tutorial_done", "1");
       }
@@ -2831,7 +3031,7 @@ function App() {
     <AppContext.Provider value={{ t, lang, profile, c }}>
       <GlobalStyles />
       <div style={{ minHeight: "100vh", background: c.bg }}>
-        {showTutorial && <Tutorial onComplete={() => setShowTutorial(false)} lang={lang} />}
+        {showTutorial && <Tutorial onComplete={() => setShowTutorial(false)} lang={lang} page={tutorialPage} />}
         {toast && <Toast message={toast.message} type={toast.type} />}
 
         {sidebarOpen && <div className="fade-in" style={{ position: "fixed", inset: 0, background: c.overlayBg, zIndex: 998 }} onClick={() => setSidebarOpen(false)} />}
@@ -2890,7 +3090,7 @@ function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <button id="lang-btn" onClick={() => setLang(lang === "en" ? "es" : "en")} className="btn-hover" style={{ padding: "7px 12px", background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 5, boxShadow: c.cardShadowSm }}><Globe size={14} /><span className="lang-text">{lang.toUpperCase()}</span></button>
             <button id="theme-btn" onClick={() => setDark(!dark)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>
-            <button id="help-btn" onClick={() => setShowTutorial(true)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}><HelpCircle size={16} /></button>
+            <button id="help-btn" onClick={() => { setTutorialPage(page); setShowTutorial(true); }} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}><HelpCircle size={16} /></button>
           </div>
         </header>
 
