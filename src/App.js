@@ -122,7 +122,7 @@ function GlobalStyles() {
         border-radius: 12px;
       }
       .row-hover:hover {
-        background-color: rgba(108,99,255,0.05) !important;
+        background-color: rgba(79,70,229,0.05) !important;
       }
 
       /* Icon Hover */
@@ -141,7 +141,7 @@ function GlobalStyles() {
         border-radius: 12px;
       }
       .skeleton-dark {
-        background: linear-gradient(90deg, #1f1f1f 25%, #2a2a2a 50%, #1f1f1f 75%);
+        background: linear-gradient(90deg, #1F2233 25%, #252A3F 50%, #1F2233 75%);
         background-size: 200% 100%;
         animation: shimmer 1.5s infinite;
         border-radius: 12px;
@@ -205,11 +205,11 @@ function GlobalStyles() {
       /* Focus States – Neumorphic Accent Ring */
       input:focus, select:focus, textarea:focus {
         outline: none;
-        box-shadow: inset 10px 10px 20px rgb(163,177,198,0.7), inset -10px -10px 20px rgba(255,255,255,0.6), 0 0 0 2px rgba(108,99,255,0.25) !important;
+        box-shadow: inset 10px 10px 20px rgb(163,177,198,0.7), inset -10px -10px 20px rgba(255,255,255,0.6), 0 0 0 2px rgba(79,70,229,0.25) !important;
       }
       button:focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #E0E5EC, 0 0 0 4px rgba(108,99,255,0.5) !important;
+        box-shadow: 0 0 0 2px #E0E5EC, 0 0 0 4px rgba(79,70,229,0.5) !important;
       }
 
       /* Toast Animation */
@@ -322,7 +322,7 @@ function GlobalStyles() {
 function SkeletonCard({ dark }) {
   const cls = dark ? "skeleton-dark" : "skeleton";
   return (
-    <div style={{ padding: 20, borderRadius: dark ? 14 : 32, background: dark ? "#0a0a0a" : "#E0E5EC", boxShadow: dark ? "0 2px 12px rgba(0,0,0,0.4)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
+    <div style={{ padding: 20, borderRadius: dark ? 14 : 32, background: dark ? "#1B1E2A" : "#E0E5EC", boxShadow: dark ? "8px 8px 16px #0D0F15, -8px -8px 16px rgba(255,255,255,0.04)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
       <div className={cls} style={{ width: 40, height: 40, borderRadius: 12, marginBottom: 14 }} />
       <div className={cls} style={{ width: "60%", height: 24, marginBottom: 10, borderRadius: 8 }} />
       <div className={cls} style={{ width: "40%", height: 14, borderRadius: 8 }} />
@@ -337,7 +337,7 @@ function SkeletonText({ dark, width = "100%", height = 14 }) {
 function SkeletonRow({ dark, cols = 5 }) {
   const cls = dark ? "skeleton-dark" : "skeleton";
   return (
-    <div style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: `1px solid ${dark ? "#141414" : "#f0f0f0"}` }}>
+    <div style={{ display: "flex", gap: 16, padding: "12px 0", borderBottom: `1px solid ${dark ? "#2A2E42" : "#f0f0f0"}` }}>
       {Array.from({ length: cols }).map((_, i) => (
         <div key={i} className={cls} style={{ flex: i === 0 ? "0 0 80px" : 1, height: 16 }} />
       ))}
@@ -366,13 +366,13 @@ function SkeletonDashboard({ dark }) {
         ))}
       </div>
       <div className="grid-responsive" style={{ gap: 12 }}>
-        <div style={{ padding: 18, borderRadius: dark ? 10 : 24, background: dark ? "#0a0a0a" : "#E0E5EC", boxShadow: dark ? "0 2px 8px rgba(0,0,0,0.3)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
+        <div style={{ padding: 18, borderRadius: dark ? 10 : 24, background: dark ? "#1B1E2A" : "#E0E5EC", boxShadow: dark ? "8px 8px 16px #0D0F15, -8px -8px 16px rgba(255,255,255,0.04)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
           <SkeletonText dark={dark} width="40%" height={18} />
           <div style={{ marginTop: 20 }}>
             <SkeletonText dark={dark} width="100%" height={180} />
           </div>
         </div>
-        <div style={{ padding: 18, borderRadius: dark ? 10 : 24, background: dark ? "#0a0a0a" : "#E0E5EC", boxShadow: dark ? "0 2px 8px rgba(0,0,0,0.3)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
+        <div style={{ padding: 18, borderRadius: dark ? 10 : 24, background: dark ? "#1B1E2A" : "#E0E5EC", boxShadow: dark ? "8px 8px 16px #0D0F15, -8px -8px 16px rgba(255,255,255,0.04)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
           <SkeletonText dark={dark} width="40%" height={18} />
           <div style={{ marginTop: 20 }}>
             <SkeletonText dark={dark} width="100%" height={180} />
@@ -475,7 +475,7 @@ function EmptyStateIllustration({ type = "box", size = 80, color = "#a3a3a3" }) 
 }
 
 function EmptyState({ icon = "box", title, description, action, onAction, dark }) {
-  const c = dark ? { text: "#fafafa", muted: "#a3a3a3", faint: "#525252" } : { text: "#1a1a1a", muted: "#737373", faint: "#a3a3a3" };
+  const c = dark ? { text: "#F1F5F9", muted: "#94A3B8", faint: "#475569" } : { text: "#2D3748", muted: "#4B5563", faint: "#6B7280" };
   return (
     <div className="fade-in" style={{ textAlign: "center", padding: "48px 24px" }}>
       <div style={{ marginBottom: 16, opacity: 0.6 }}>
@@ -484,7 +484,7 @@ function EmptyState({ icon = "box", title, description, action, onAction, dark }
       {title && <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 600, color: c.text }}>{title}</h3>}
       {description && <p style={{ margin: "0 0 20px", fontSize: 13, color: c.muted, maxWidth: 280, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>{description}</p>}
       {action && onAction && (
-        <button onClick={onAction} className="btn-hover" style={{ padding: "10px 22px", background: "#6C63FF", color: "#fff", border: "none", borderRadius: 16, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)" }}>
+        <button onClick={onAction} className="btn-hover" style={{ padding: "10px 22px", background: "#4F46E5", color: "#fff", border: "none", borderRadius: 16, fontSize: 13, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6, boxShadow: "5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px rgba(255,255,255,0.4)" }}>
           <Plus size={16} /> {action}
         </button>
       )}
@@ -497,15 +497,16 @@ function EmptyState({ icon = "box", title, description, action, onAction, dark }
 // ============================================
 const LIGHT = {
   bg:"#E0E5EC",card:"#E0E5EC",cardBorder:"transparent",
-  text:"#3D4852",textSec:"#3D4852",textMuted:"#6B7280",textFaint:"#9CA3AF",
+  // text: 8.9:1 ✅  textMuted: 5.2:1 ✅  textFaint: 3.8:1 (decorative only)
+  text:"#2D3748",textSec:"#2D3748",textMuted:"#4B5563",textFaint:"#6B7280",
   input:"#E0E5EC",inputBorder:"transparent",
   headerBg:"rgba(224,229,236,0.92)",headerBorder:"transparent",
   tableBg:"#E0E5EC",tableRowBorder:"rgba(163,177,198,0.25)",
-  tagBg:"rgba(108,99,255,0.1)",modalBg:"#E0E5EC",overlayBg:"rgba(0,0,0,.4)",
+  tagBg:"rgba(79,70,229,0.1)",modalBg:"#E0E5EC",overlayBg:"rgba(0,0,0,.4)",
   confirmBg:"#E0E5EC",urgentBg:"rgba(239,68,68,0.08)",
   sidebarBg:"#E0E5EC",pillBg:"#E0E5EC",pillActive:"#E0E5EC",
-  accent:"#6C63FF",accentLight:"rgba(108,99,255,0.12)",accentDark:"#5A52D5",
-  // Neumorphic shadow tokens
+  // accent on bg: 4.5:1 ✅  white on accent: 5.7:1 ✅
+  accent:"#4F46E5",accentLight:"rgba(79,70,229,0.12)",accentDark:"#4338CA",
   cardShadow:"9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)",
   cardShadowSm:"5px 5px 10px rgb(163,177,198,0.6), -5px -5px 10px rgba(255,255,255,0.5)",
   inputShadow:"inset 6px 6px 10px rgb(163,177,198,0.6), inset -6px -6px 10px rgba(255,255,255,0.5)",
@@ -515,22 +516,23 @@ const LIGHT = {
 };
 
 const DARK = {
-  bg:"#000",card:"#0a0a0a",cardBorder:"rgba(255,255,255,.03)",
-  text:"#fafafa",textSec:"#d4d4d4",textMuted:"#a3a3a3",textFaint:"#525252",
-  input:"#141414",inputBorder:"#1f1f1f",
-  headerBg:"rgba(0,0,0,.8)",headerBorder:"#141414",
-  tableBg:"#0a0a0a",tableRowBorder:"#141414",
-  tagBg:"#141414",modalBg:"#0a0a0a",overlayBg:"rgba(0,0,0,.8)",
-  confirmBg:"#0a0a0a",urgentBg:"#1c0a0a",
-  sidebarBg:"#000",pillBg:"#141414",pillActive:"#1a1a1a",
-  accent:"#8B84FF",accentLight:"#1e1a4f",accentDark:"#6C63FF",
-  // Dark-mode shadow fallbacks (standard shadows, not neumorphic)
-  cardShadow:"0 2px 12px rgba(0,0,0,0.4)",
-  cardShadowSm:"0 1px 6px rgba(0,0,0,0.3)",
-  inputShadow:"inset 0 2px 4px rgba(0,0,0,0.3)",
-  inputShadowDeep:"inset 0 4px 8px rgba(0,0,0,0.4)",
-  insetSm:"inset 0 1px 3px rgba(0,0,0,0.3)",
-  cardRadius:14,inputRadius:10,btnRadius:8,
+  // Deep navy base — neumorphic dark, not harsh pure black
+  bg:"#13151C",card:"#1B1E2A",cardBorder:"rgba(255,255,255,.04)",
+  text:"#F1F5F9",textSec:"#CBD5E1",textMuted:"#94A3B8",textFaint:"#475569",
+  input:"#1F2233",inputBorder:"#2A2E42",
+  headerBg:"rgba(19,21,28,0.88)",headerBorder:"#2A2E42",
+  tableBg:"#1B1E2A",tableRowBorder:"#2A2E42",
+  tagBg:"#252A3F",modalBg:"#1B1E2A",overlayBg:"rgba(0,0,0,.7)",
+  confirmBg:"#1F2233",urgentBg:"#2A1A1A",
+  sidebarBg:"#13151C",pillBg:"#1F2233",pillActive:"#252A3F",
+  accent:"#818CF8",accentLight:"#1E1F3B",accentDark:"#6366F1",
+  // Dark neumorphic shadows: dark anchor #0D0F15 + subtle white highlight
+  cardShadow:"8px 8px 16px #0D0F15, -8px -8px 16px rgba(255,255,255,0.04)",
+  cardShadowSm:"4px 4px 8px #0D0F15, -4px -4px 8px rgba(255,255,255,0.03)",
+  inputShadow:"inset 4px 4px 8px #0D0F15, inset -4px -4px 8px rgba(255,255,255,0.03)",
+  inputShadowDeep:"inset 6px 6px 12px #0D0F15, inset -6px -6px 12px rgba(255,255,255,0.04)",
+  insetSm:"inset 2px 2px 4px #0D0F15, inset -2px -2px 4px rgba(255,255,255,0.03)",
+  cardRadius:20,inputRadius:14,btnRadius:14,
 };
 
 const T = {
@@ -902,7 +904,7 @@ function Tutorial({onComplete,lang,page}){
         borderRadius:isLargeTarget?16:12,
         zIndex:2001,
         // The 4000px spread shadow creates the dark overlay with a hole cut out
-        boxShadow:"0 0 0 4000px rgba(0,0,0,0.55), 0 0 0 2px #6C63FF",
+        boxShadow:"0 0 0 4000px rgba(0,0,0,0.55), 0 0 0 2px #4F46E5",
         pointerEvents:"none",
         transition:"all 0.3s ease"
       }}/>
@@ -910,7 +912,7 @@ function Tutorial({onComplete,lang,page}){
       {/* Tooltip card */}
       <div className="scale-in" style={tipStyle}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-          <span style={{fontSize:11,fontWeight:700,color:"#6C63FF",background:"rgba(108,99,255,0.12)",padding:"3px 9px",borderRadius:20}}>
+          <span style={{fontSize:11,fontWeight:700,color:"#4F46E5",background:"rgba(79,70,229,0.12)",padding:"3px 9px",borderRadius:20}}>
             {step+1} / {steps.length}
           </span>
           <button onClick={onComplete} className="btn-hover" style={{background:"none",border:"none",color:"#9CA3AF",cursor:"pointer",fontSize:12,fontWeight:600,padding:"4px 6px",borderRadius:8,display:"flex",alignItems:"center",gap:4,minHeight:"auto"}}>
@@ -925,7 +927,7 @@ function Tutorial({onComplete,lang,page}){
               {lbl.bk}
             </button>
           )}
-          <button onClick={()=>step<steps.length-1?setStep(step+1):onComplete()} className="btn-hover" style={{padding:"8px 20px",background:"#6C63FF",color:"#fff",border:"none",borderRadius:12,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:"4px 4px 8px rgba(108,99,255,0.35)",minHeight:"auto"}}>
+          <button onClick={()=>step<steps.length-1?setStep(step+1):onComplete()} className="btn-hover" style={{padding:"8px 20px",background:"#4F46E5",color:"#fff",border:"none",borderRadius:12,fontSize:12,fontWeight:700,cursor:"pointer",boxShadow:"4px 4px 8px rgba(79,70,229,0.35)",minHeight:"auto"}}>
             {step<steps.length-1?lbl.nx:lbl.dn}
           </button>
         </div>
@@ -1094,9 +1096,9 @@ function Toast({ message, type = "success" }) {
     success: <CheckCircle size={18} color="#10b981" />,
     error: <AlertTriangle size={18} color="#ef4444" />,
     warning: <AlertTriangle size={18} color="#f59e0b" />,
-    info: <Package size={18} color="#6C63FF" />
+    info: <Package size={18} color="#4F46E5" />
   };
-  const accent = { success:"#10b981", error:"#ef4444", warning:"#f59e0b", info:"#6C63FF" };
+  const accent = { success:"#10b981", error:"#ef4444", warning:"#f59e0b", info:"#4F46E5" };
   const col = accent[type] || accent.success;
   return (
     <div className="slide-up" style={{
