@@ -216,6 +216,102 @@ function GlobalStyles() {
       .toast-enter {
         animation: slideUp 0.3s ease-out forwards;
       }
+
+      /* ══════════════════════════════════════
+         RESPONSIVE LAYOUT — Tablet & Mobile
+         ══════════════════════════════════════ */
+
+      /* Distribute view: main content + 380px cart sidebar */
+      .distribute-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 20px;
+      }
+      @media (max-width: 1024px) {
+        .distribute-grid { grid-template-columns: 1fr; }
+      }
+
+      /* Calendar view: main calendar + 320px detail panel */
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 20px;
+      }
+      @media (max-width: 900px) {
+        .calendar-grid { grid-template-columns: 1fr; }
+      }
+
+      /* 3-column form fields (qty / condition / cost) */
+      .form-3col {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 580px) {
+        .form-3col { grid-template-columns: 1fr; }
+      }
+
+      /* 2-column form fields (email / phone) */
+      .form-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      @media (max-width: 580px) {
+        .form-2col { grid-template-columns: 1fr; }
+      }
+
+      /* Inventory table: hide verbose columns on mobile */
+      @media (max-width: 768px) {
+        /* Hide: ID(1), Subcategory(3), Condition(5), Donor(6), Location(8), Date(9) */
+        .inventory-table th:nth-child(1),
+        .inventory-table td:nth-child(1),
+        .inventory-table th:nth-child(3),
+        .inventory-table td:nth-child(3),
+        .inventory-table th:nth-child(5),
+        .inventory-table td:nth-child(5),
+        .inventory-table th:nth-child(6),
+        .inventory-table td:nth-child(6),
+        .inventory-table th:nth-child(8),
+        .inventory-table td:nth-child(8),
+        .inventory-table th:nth-child(9),
+        .inventory-table td:nth-child(9) {
+          display: none;
+        }
+      }
+
+      /* Stat card row: enforce 2-up on small mobile */
+      @media (max-width: 480px) {
+        .stat-cards-row {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+        }
+        .stat-cards-row > * {
+          flex: none !important;
+          min-width: unset !important;
+        }
+      }
+
+      /* Main page padding: tighter on mobile */
+      @media (max-width: 640px) {
+        #page-content { padding: 14px !important; }
+      }
+
+      /* Header: hide lang button text label on tiny screens */
+      @media (max-width: 400px) {
+        .lang-text { display: none; }
+      }
+
+      /* Minimum touch targets on mobile */
+      @media (max-width: 768px) {
+        button { min-height: 40px; }
+        .btn-hover { min-height: 40px; }
+      }
+
+      /* Cards: slightly less padding on mobile */
+      @media (max-width: 640px) {
+        .neu-card { padding: 18px !important; }
+      }
     `}</style>
   );
 }
@@ -269,14 +365,14 @@ function SkeletonDashboard({ dark }) {
           </div>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-        <div style={{ padding: 18, borderRadius: 10, background: dark ? "#0a0a0a" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,.03)" : "rgba(0,0,0,.04)"}` }}>
+      <div className="grid-responsive" style={{ gap: 12 }}>
+        <div style={{ padding: 18, borderRadius: dark ? 10 : 24, background: dark ? "#0a0a0a" : "#E0E5EC", boxShadow: dark ? "0 2px 8px rgba(0,0,0,0.3)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
           <SkeletonText dark={dark} width="40%" height={18} />
           <div style={{ marginTop: 20 }}>
             <SkeletonText dark={dark} width="100%" height={180} />
           </div>
         </div>
-        <div style={{ padding: 18, borderRadius: 10, background: dark ? "#0a0a0a" : "#fff", border: `1px solid ${dark ? "rgba(255,255,255,.03)" : "rgba(0,0,0,.04)"}` }}>
+        <div style={{ padding: 18, borderRadius: dark ? 10 : 24, background: dark ? "#0a0a0a" : "#E0E5EC", boxShadow: dark ? "0 2px 8px rgba(0,0,0,0.3)" : "9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255,0.5)" }}>
           <SkeletonText dark={dark} width="40%" height={18} />
           <div style={{ marginTop: 20 }}>
             <SkeletonText dark={dark} width="100%" height={180} />
@@ -876,7 +972,7 @@ function Dashboard({ items, giftCards, distributions }) {
 
   return (
     <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      <div className="stat-cards-row" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <StatCard icon={<Package size={16} />} label={t.totalReceived} value={totalQty} color="#2563eb" delay={1} />
         <StatCard icon={<Warehouse size={16} />} label={t.inStorage} value={inStock} color="#0ea5e9" delay={2} />
         <StatCard icon={<Truck size={16} />} label={t.distributed} value={dist} color="#10b981" delay={3} />
@@ -886,7 +982,7 @@ function Dashboard({ items, giftCards, distributions }) {
         {urgent > 0 && <StatCard icon={<AlertTriangle size={16} />} label={t.urgentItems} value={urgent} color="#ef4444" delay={7} />}
       </div>
 
-      <div className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 12 }}>
+      <div className="grid-responsive" style={{ gap: 12 }}>
         <div className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 12px", fontSize: 13, fontWeight: 600, color: c.text }}>{t.inventoryByCategory}</h3>
           {catData.length === 0 ? (
@@ -1176,7 +1272,7 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
         </div>
       </Modal>
 
-      <div className="fade-in grid-responsive" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", gap: 20 }}>
+      <div className="fade-in grid-responsive" style={{ gap: 20 }}>
         <div className="card-hover" style={card}>
           <h2 style={{ margin: "0 0 24px", fontSize: 18, fontWeight: 700, color: c.text, display: "flex", alignItems: "center", gap: 10 }}>
             <Package size={20} color="#4f46e5" /> {t.receiveNew}
@@ -1216,7 +1312,7 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
                 <label style={{ ...lbl, marginBottom: 4 }}>{donorType === "organization" ? "Contact Name" : t.donorName}</label>
                 <input value={donorName} onChange={e => setDonorName(e.target.value)} placeholder={t.anonymous} style={inp} />
               </div>
-              <div className="flex-col-mobile" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div className="form-2col">
                 <div>
                   <label style={{ ...lbl, marginBottom: 4 }}><Mail size={12} style={{ marginRight: 4 }} />{t.email}</label>
                   <input type="email" value={donorEmail} onChange={e => setDonorEmail(e.target.value)} placeholder="email@example.com" style={inp} />
@@ -1269,7 +1365,7 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
                     {subs.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
-                <div className="flex-col-mobile" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                <div className="form-3col">
                   <div>
                     <label style={lbl}>{t.quantity} *</label>
                     <input type="number" min="1" value={qty} onChange={e => setQty(e.target.value)} placeholder="25" style={inp} />
@@ -1613,7 +1709,7 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
         <Warehouse size={20} color={c.accent} /> {t.fullInventory}
       </h2>
 
-      <div className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+      <div className="grid-responsive" style={{ gap: 20, marginBottom: 20 }}>
         <div className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 12px", fontSize: 15, fontWeight: 600, color: c.text, display: "flex", alignItems: "center", gap: 8 }}>
             <Home size={18} /> {lang === "es" ? "Mapa de Almacén" : "Storage Map"}
@@ -1713,7 +1809,7 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
         </div>
 
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+          <table className="inventory-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: c.tableBg, borderBottom: `2px solid ${c.headerBorder}` }}>
                 {[t.id, t.category, t.subcategory, t.qty, t.condition, t.donor, t.status, t.location, t.date, t.action].map(h => (
@@ -1984,7 +2080,7 @@ function DistributeView({ items, addItem, updateItem, addDistribution, showToast
         </div>
       </Modal>
 
-      <div className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 20 }}>
+      <div className="distribute-grid">
         <div className="card-hover" style={card}>
           <div className="stack-mobile" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
             <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: c.text, display: "flex", alignItems: "center", gap: 10 }}>
@@ -2214,7 +2310,7 @@ function GiftCardsView({ giftCards }) {
         </div>
       </div>
 
-      <div className="grid-responsive" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+      <div className="grid-responsive" style={{ gap: 20 }}>
         <div className="card-hover" style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: c.text }}>{t.byCompany}</h3>
           {byCompany.length === 0 ? (
@@ -2431,7 +2527,7 @@ function CalendarView({ items, distributions, giftCards }) {
   const selectedData = selectedDate ? getDayData(selectedDate) : null;
 
   return (
-    <div className="fade-in grid-responsive" style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20 }}>
+    <div className="fade-in calendar-grid">
       <div className="card-hover" style={card}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <button onClick={prevMonth} className="btn-hover" style={{ padding: "8px 14px", background: c.card, border: "none", borderRadius: c.btnRadius, cursor: "pointer", color: c.text, fontSize: 14, boxShadow: c.cardShadowSm }}>←</button>
@@ -2792,7 +2888,7 @@ function App() {
         <header style={{ position: "sticky", top: 0, background: c.headerBg, backdropFilter: "blur(16px)", borderBottom: dark ? `1px solid ${c.headerBorder}` : "none", boxShadow: dark ? "none" : "0 4px 12px rgb(163,177,198,0.35)", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 100 }}>
           <button id="sidebar-btn" onClick={() => setSidebarOpen(true)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.text, boxShadow: c.cardShadowSm }}><Menu size={18} /></button>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <button id="lang-btn" onClick={() => setLang(lang === "en" ? "es" : "en")} className="btn-hover" style={{ padding: "7px 12px", background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 5, boxShadow: c.cardShadowSm }}><Globe size={14} /> {lang.toUpperCase()}</button>
+            <button id="lang-btn" onClick={() => setLang(lang === "en" ? "es" : "en")} className="btn-hover" style={{ padding: "7px 12px", background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 5, boxShadow: c.cardShadowSm }}><Globe size={14} /><span className="lang-text">{lang.toUpperCase()}</span></button>
             <button id="theme-btn" onClick={() => setDark(!dark)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}>{dark ? <Sun size={16} /> : <Moon size={16} />}</button>
             <button id="help-btn" onClick={() => setShowTutorial(true)} className="icon-hover btn-hover" style={{ padding: 10, background: c.card, border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", color: c.textMuted, boxShadow: c.cardShadowSm }}><HelpCircle size={16} /></button>
           </div>
