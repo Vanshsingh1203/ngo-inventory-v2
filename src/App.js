@@ -1254,7 +1254,7 @@ function Dashboard({ items, giftCards, distributions }) {
 // RECEIVE FORM
 // ============================================
 function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToast }) {
-  const { t, lang, profile, c } = useApp();
+  const { t, lang, c } = useApp();
   const dark = c.bg === "#000";
 
   const [cat, setCat] = useState("");
@@ -1377,7 +1377,7 @@ function ReceiveForm({ items, giftCards, addItem, addGiftCard, addDonor, showToa
       notes,
       urgent,
       location: "",
-      created_by: profile?.id
+      created_by: null
     };
     const ok = await addItem(entry);
     if (ok) {
@@ -1808,7 +1808,7 @@ function FloorPlan2D({ items, onZoneClick, selectedZone, c, lang, highlightShelf
 // INVENTORY VIEW
 // ============================================
 function InventoryView({ items, updateItem, deleteItem, showToast }) {
-  const { t, lang, profile, c } = useApp();
+  const { t, lang, c } = useApp();
   const dark = c.bg === "#000";
 
   const [search, setSearch] = useState("");
@@ -1865,7 +1865,7 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
   };
 
   const inp = { padding: "10px 14px", border: "none", borderRadius: c.inputRadius, fontSize: 13, outline: "none", background: c.input, color: c.text, boxShadow: c.inputShadow };
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = true;
   const card = { background: c.card, borderRadius: c.cardRadius, padding: 20, boxShadow: c.cardShadow };
   const getShelfZone = (shelf) => ZONES.find(z => z.locations.includes(shelf?.toUpperCase()));
 
@@ -2093,7 +2093,7 @@ function InventoryView({ items, updateItem, deleteItem, showToast }) {
 // DISTRIBUTE VIEW
 // ============================================
 function DistributeView({ items, addItem, updateItem, addDistribution, showToast }) {
-  const { t, lang, profile, c } = useApp();
+  const { t, lang, c } = useApp();
   const dark = c.bg === "#000";
 
   const [cart, setCart] = useState([]);
@@ -2212,7 +2212,7 @@ function DistributeView({ items, addItem, updateItem, addDistribution, showToast
         id: `DIST-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
         item_id: item.id, quantity: cartItem.qty, distribution_type: recipient?.type || "individual",
         people_count: peopleCount, recipient_id: recipient?.id || null,
-        distributed_by: profile?.id, date: today, notes: ""
+        distributed_by: null, date: today, notes: ""
       });
 
       totalDistributed += cartItem.qty;
@@ -2855,8 +2855,6 @@ function CalendarView({ items, distributions, giftCards }) {
 // MAIN APP COMPONENT
 // ============================================
 function App() {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [dark, setDark] = useState(false);
   const [lang, setLang] = useState("en");
   const [page, setPage] = useState("dashboard");
@@ -2867,7 +2865,6 @@ function App() {
   const [giftCards, setGiftCards] = useState([]);
   const [distributions, setDistributions] = useState([]);
   const [toast, setToast] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   const c = dark ? DARK : LIGHT;
   const t = T[lang];
@@ -2884,37 +2881,17 @@ function App() {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user || null);
-      if (!session) setLoading(false);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user || null);
-      if (!session) setLoading(false);
-    });
-    return () => subscription.unsubscribe();
+    if (!localStorage.getItem("tutorial_done")) {
+      setTutorialPage("global");
+      setShowTutorial(true);
+      localStorage.setItem("tutorial_done", "1");
+    }
   }, []);
-
-  useEffect(() => {
-    if (!user) return;
-    const fetchProfile = async () => {
-      const { data } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-      setProfile(data);
-      if (data && !localStorage.getItem("tutorial_done")) {
-        setTutorialPage("global");
-        setShowTutorial(true);
-        localStorage.setItem("tutorial_done", "1");
-      }
-      setLoading(false);
-    };
-    fetchProfile();
-  }, [user]);
 
   // ============================================
   // FETCH DATA WITH PROPER COLUMN MAPPING
   // ============================================
   useEffect(() => {
-    if (!user) return;
     const fetchData = async () => {
       const [{ data: itemsData }, { data: gcData }, { data: distData }] = await Promise.all([
         supabase.from("items").select("*").eq("deleted", false).order("date", { ascending: false }),
@@ -2943,7 +2920,7 @@ function App() {
       .on("postgres_changes", { event: "*", schema: "public", table: "distributions" }, () => fetchData())
       .subscribe();
     return () => supabase.removeChannel(channel);
-  }, [user]);
+  }, []);
 
   // ============================================
   // CRUD FUNCTIONS WITH PROPER COLUMN NAMES
@@ -3006,31 +2983,18 @@ function App() {
     return error ? null : data;
   };
 
-  const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
-    setPage("dashboard");
-  };
-
   const pages = [
-    { id: "dashboard", icon: <BarChart3 size={18} />, label: t.dashboard, roles: ["admin", "reception", "distribution", "inventory"] },
-    { id: "receive", icon: <Package size={18} />, label: t.receive, roles: ["admin", "reception"] },
-    { id: "inventory", icon: <Warehouse size={18} />, label: t.inventory, roles: ["admin", "inventory"] },
-    { id: "distribute", icon: <Truck size={18} />, label: t.distribute, roles: ["admin", "distribution"] },
-    { id: "giftcards", icon: <CreditCard size={18} />, label: t.giftCards, roles: ["admin", "reception"] },
-    { id: "reports", icon: <FileText size={18} />, label: t.reports, roles: ["admin"] },
-    { id: "calendar", icon: <CalendarDays size={18} />, label: lang === "es" ? "Calendario" : "Calendar", roles: ["admin", "reception", "distribution", "inventory"] }
+    { id: "dashboard", icon: <BarChart3 size={18} />, label: t.dashboard },
+    { id: "receive", icon: <Package size={18} />, label: t.receive },
+    { id: "inventory", icon: <Warehouse size={18} />, label: t.inventory },
+    { id: "distribute", icon: <Truck size={18} />, label: t.distribute },
+    { id: "giftcards", icon: <CreditCard size={18} />, label: t.giftCards },
+    { id: "reports", icon: <FileText size={18} />, label: t.reports },
+    { id: "calendar", icon: <CalendarDays size={18} />, label: lang === "es" ? "Calendario" : "Calendar" },
   ];
-  const visiblePages = pages.filter(p => p.roles.includes(profile?.role || "admin"));
-
-  if (loading) return (<div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: c.bg }}><LoadingSpinner size={40} /></div>);
-  if (!user) return <LoginPage dark={dark} toggleDark={() => setDark(!dark)} />;
-
-  const roleLabels = { admin: t.admin, reception: t.reception, distribution: t.distribution, inventory: t.inventoryRole };
 
   return (
-    <AppContext.Provider value={{ t, lang, profile, c }}>
+    <AppContext.Provider value={{ t, lang, c }}>
       <GlobalStyles />
       <div style={{ minHeight: "100vh", background: c.bg }}>
         {showTutorial && <Tutorial onComplete={() => setShowTutorial(false)} lang={lang} page={tutorialPage} />}
@@ -3054,7 +3018,7 @@ function App() {
 
           {/* Nav items */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 6 }}>
-            {visiblePages.map(p => (
+            {pages.map(p => (
               <button key={p.id} onClick={() => { setPage(p.id); setSidebarOpen(false); }} className="btn-hover" style={{
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
                 background: c.sidebarBg,
@@ -3068,21 +3032,10 @@ function App() {
             ))}
           </div>
 
-          {/* User + logout */}
-          <div style={{ borderTop: dark ? "1px solid #262626" : "none", paddingTop: dark ? 16 : 0, marginTop: 8 }}>
-            {!dark && <div style={{ height: 1, background: "rgba(163,177,198,0.3)", marginBottom: 16 }} />}
-            <div style={{ padding: "10px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: c.sidebarBg, boxShadow: dark ? "inset 0 2px 4px rgba(0,0,0,0.3)" : c.insetSm, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <User size={16} color={c.textMuted} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: dark ? "#fff" : c.text }}>{profile?.full_name || user?.email?.split("@")[0]}</div>
-                <div style={{ fontSize: 10, color: c.textMuted }}>{roleLabels[profile?.role] || profile?.role}</div>
-              </div>
-            </div>
-            <button onClick={logout} className="btn-hover" style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "transparent", color: "#ef4444", border: "none", borderRadius: dark ? 8 : 14, cursor: "pointer", fontSize: 12, fontWeight: 600, width: "100%", marginTop: 4 }}>
-              <LogOut size={16} /> {t.logout}
-            </button>
+          {/* Version tag */}
+          <div style={{ paddingTop: 16 }}>
+            <div style={{ height: 1, background: dark ? "rgba(255,255,255,0.06)" : "rgba(163,177,198,0.3)", marginBottom: 14 }} />
+            <div style={{ padding: "8px 14px", fontSize: 10, color: c.textFaint, fontWeight: 500, letterSpacing: "0.04em" }}>NGO Inventory Manager v2.4</div>
           </div>
         </div>
 
