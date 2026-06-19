@@ -112,8 +112,8 @@ Donor arrives
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend framework | React 19 |
-| Authentication | Supabase Auth (email/password) |
+| Frontend framework | React 19 + Vite |
+| Build tool | Vite 6 |
 | Database | Supabase (PostgreSQL + Row Level Security) |
 | Real-time sync | Supabase Realtime (postgres_changes) |
 | Email | Resend API via Supabase Edge Function (Deno) |
@@ -226,8 +226,8 @@ npm install
 Create `.env.local` in the project root:
 
 ```env
-REACT_APP_SUPABASE_URL=https://your-project.supabase.co
-REACT_APP_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 ### 3. Set up the database
@@ -256,8 +256,8 @@ supabase functions deploy send-receipt
 ### 5. Run locally
 
 ```bash
-npm start
-# → http://localhost:3000
+npm run dev
+# → http://localhost:5173
 ```
 
 ### 6. Build for production
@@ -266,7 +266,7 @@ npm start
 npm run build
 ```
 
-Deploy the `build/` folder to Vercel, Netlify, or any static host. Add the two environment variables in your hosting dashboard.
+Deploy the `dist/` folder to Vercel, Netlify, or any static host. Add the two environment variables in your hosting dashboard.
 
 ---
 
@@ -323,8 +323,9 @@ All interactive element contrast ratios meet **WCAG 2.1 AA** (4.5:1 minimum for 
 
 ```
 ngo-inventory-v2/
-├── public/
-│   └── index.html                  # Google Fonts preconnect + app shell
+├── index.html                      # Vite entry HTML (Google Fonts + app shell)
+├── vite.config.js                  # Vite build config
+├── public/                         # Static assets (favicon, manifest)
 ├── src/
 │   ├── App.js                      # Complete React frontend (single-file)
 │   ├── index.css                   # Base reset, body font, scrollbar
